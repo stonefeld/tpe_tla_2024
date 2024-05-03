@@ -27,10 +27,22 @@ void releaseExpression(Expression * expression) {
 	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
 	if (expression != NULL) {
 		switch (expression->type) {
-			case ADDITION:
-			case DIVISION:
-			case MULTIPLICATION:
-			case SUBTRACTION:
+			case TITLE:
+			case HEADING_1:
+			case HEADING_2:
+			case HEADING_3:
+			case PAGE_SKIP:
+			case UNORDERED_LIST:
+			case ORDERED_LIST:
+			case CELL_SEPARATOR:
+			case IMAGE:
+			case BOLD:
+			case ITALIC:
+			case UNDERLINE:
+			case TABLE:
+			case CODE:
+			case ESCAPE:
+			case EQUATION:
 				releaseExpression(expression->leftExpression);
 				releaseExpression(expression->rightExpression);
 				break;

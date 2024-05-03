@@ -9,14 +9,14 @@
 %union {
 	/** Terminals. */
 
-	int integer;
+	char * string;
 	Token token;
 
 	/** Non-terminals. */
 
 	Constant * constant;
-	Expression * expression;
 	Factor * factor;
+	Expression * expression;
 	Program * program;
 }
 
@@ -35,7 +35,7 @@
 */
 
 /** Terminals. */
-%token <integer> INTEGER
+%token <string> STRING
 %token <token> ADD
 %token <token> CLOSE_PARENTHESIS
 %token <token> DIV
@@ -75,7 +75,7 @@ factor: OPEN_PARENTHESIS expression CLOSE_PARENTHESIS				{ $$ = ExpressionFactor
 	| constant														{ $$ = ConstantFactorSemanticAction($1); }
 	;
 
-constant: INTEGER													{ $$ = IntegerConstantSemanticAction($1); }
+constant: STRING													{ $$ = StringConstantSemanticAction($1); }
 	;
 
 %%

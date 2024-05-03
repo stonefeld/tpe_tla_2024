@@ -27,11 +27,23 @@ typedef struct Program Program;
  */
 
 enum ExpressionType {
-	ADDITION,
-	DIVISION,
 	FACTOR,
-	MULTIPLICATION,
-	SUBTRACTION
+	TITLE,
+	HEADING_1,
+	HEADING_2,
+	HEADING_3,
+	PAGE_SKIP,
+	UNORDERED_LIST,
+	ORDERED_LIST,
+	CELL_SEPARATOR,
+	IMAGE,
+	BOLD,
+	ITALIC,
+	UNDERLINE,
+	TABLE,
+	CODE,
+	ESCAPE,
+	EQUATION
 };
 
 enum FactorType {
@@ -40,7 +52,7 @@ enum FactorType {
 };
 
 struct Constant {
-	int value;
+	char* value;
 };
 
 struct Factor {

@@ -47,116 +47,124 @@ Program* ExpressionProgramSemanticAction(CompilerState* compilerState, Expressio
 	return program;
 }
 
-Expression* DoubleExpressionSemanticAction(Expression* leftExpression, Expression* rightExpression) {
+Expression* TokenExpressionSemanticAction(StartToken startToken, EndToken endToken, Constant* contantant, Expression* expression) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
-	Expression* expression = calloc(1, sizeof(Expression));
-	expression->leftExpression = leftExpression;
-	expression->rightExpression = rightExpression;
-	expression->type = MULTIPLE_EXPRESSIONS;
-	return expression;
-}
-
-Expression* LonelyExpressionSemanticAction(StartToken startToken, EndToken endToken, Constant* constant) {
-	_logSyntacticAnalyzerAction(__FUNCTION__);
-	Expression* expression = calloc(1, sizeof(Expression));
-	expression->startToken = startToken;
-	expression->constant = constant;
-	expression->endToken = endToken;
-	expression->type = SIMPLE_EXPRESSION;
-	return expression;
+	Expression* tokenExpression = calloc(1, sizeof(Expression));
+	tokenExpression->startToken = startToken;
+	tokenExpression->constant = contantant;
+	tokenExpression->endToken = endToken;
+	tokenExpression->expression = expression;
+	tokenExpression->type = TOKEN_EXPRESSION;
+	return tokenExpression;
 }
 
 Expression* FactorExpressionSemanticAction(Factor* factor) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
-	Expression* expression = calloc(1, sizeof(Expression));
-	expression->factor = factor;
-	expression->type = FACTOR;
-	return expression;
+	Expression* factorExpression = calloc(1, sizeof(Expression));
+	factorExpression->factor = factor;
+	factorExpression->type = FACTOR;
+	return factorExpression;
 }
 
-Factor* ListFactorSemanticAction(StartToken startToken, EndToken endToken, List* list) {
+Factor* ListFactorSemanticAction(StartToken startToken, EndToken endToken, List* list, Factor* factor) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
-	Factor* factor = calloc(1, sizeof(Factor));
-	factor->startListToken = startToken;
-	factor->list = list;
-	factor->endListToken = endToken;
-	factor->type = LIST;
-	return factor;
+	Factor* listFactor = calloc(1, sizeof(Factor));
+	listFactor->startListToken = startToken;
+	listFactor->list = list;
+	listFactor->endListToken = endToken;
+	listFactor->listFactor = factor;
+	listFactor->type = LIST;
+	return listFactor;
+
 }
 
-Factor* LonelyFactorSemanticAction(StartToken startToken, EndToken endToken, Constant* constant) {
+Factor* TokenFactorSemanticAction(StartToken startToken, EndToken endToken, Constant* constant, Factor *factor) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
-	Factor* factor = calloc(1, sizeof(Factor));
-	factor->startToken = startToken;
-	factor->constant = constant;
-	factor->endToken = endToken;
-	factor->type = SIMPLE_FACTOR;
-	return factor;
+	Factor* tokenFactor = calloc(1, sizeof(Factor));
+	tokenFactor->startToken = startToken;
+	tokenFactor->tokenConstant = constant;
+	tokenFactor->endToken = endToken;
+	tokenFactor->tokenFactor = factor;
+	tokenFactor->type = TOKEN;
+	return tokenFactor;
+
 }
 
-Factor* BoldFactorSemanticAction(Bold* bold) {
+Factor* BoldFactorSemanticAction(Bold* bold, Factor* factor) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
-	Factor* factor = calloc(1, sizeof(Factor));
-	factor->bold = bold;
-	factor->type = BOLD;
-	return factor;
+	Factor* boldFactor = calloc(1, sizeof(Factor));
+	boldFactor->bold = bold;
+	boldFactor->boldFactor = factor;
+	boldFactor->type = BOLD;
+	return boldFactor;
 }
 
-Factor* ItalicFactorSemanticAction(Italic* italic) {
+Factor* ItalicFactorSemanticAction(Italic* italic, Factor* factor) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
-	Factor* factor = calloc(1, sizeof(Factor));
-	factor->italic = italic;
-	factor->type = ITALIC;
-	return factor;
+	Factor* italicFactor = calloc(1, sizeof(Factor));
+	italicFactor->italic = italic;
+	italicFactor->italicFactor = factor;
+	italicFactor->type = ITALIC;
+	return italicFactor;
 }
 
-Factor* UnderlineFactorSemanticAction(Underline* underline) {
+Factor* UnderlineFactorSemanticAction(Underline* underline, Factor* factor) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
-	Factor* factor = calloc(1, sizeof(Factor));
-	factor->underline = underline;
-	factor->type = UNDERLINE;
-	return factor;
+	Factor* underlineFactor = calloc(1, sizeof(Factor));
+	underlineFactor->underline = underline;
+	underlineFactor->underlineFactor = factor;
+	underlineFactor->type = UNDERLINE;
+	return underlineFactor;
 }
 
-Factor* TableFactorSemanticAction(Table* table) {
+Factor* TableFactorSemanticAction(Table* table, Factor* factor) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
-	Factor* factor = calloc(1, sizeof(Factor));
-	factor->table = table;
-	factor->type = TABLE;
-	return factor;
+	Factor* tableFactor = calloc(1, sizeof(Factor));
+	tableFactor->table = table;
+	tableFactor->tableFactor = factor;
+	tableFactor->type = TABLE;
+	return tableFactor;
+}
+
+Factor* ConstantFactorSemanticAction(Constant* constant) {
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+	Factor* constantFactor = calloc(1, sizeof(Factor));
+	constantFactor->lonelyConstant = constant;
+	constantFactor->type = CONSTANT;
+	return constantFactor;
+}
+
+List* ListSemanticAction(Constant* constant, List* item) {
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+	List* list = calloc(1, sizeof(List));
+	list->constant = constant;
+	list->item = item;
+	list->type = MULTIPLE_ITEMS;
+	return list;
 }
 
 List* LonelyListSemanticAction(Constant* constant) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	List* list = calloc(1, sizeof(List));
-	list->constant = constant;
-	list->type = SIMPLE_LIST;
+	list->lonelyConstant = constant;
+	list->type = LONELY_ITEM;
 	return list;
 }
 
-List* DoubleListSemanticAction(List* leftList, List* rightList) {
+Table* TableSemanticAction(Constant* constant, Table* column) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
-	List* list = calloc(1, sizeof(List));
-	list->leftList = leftList;
-	list->rightList = rightList;
-	list->type = MULTIPLE_LISTS;
-	return list;
+	Table* table = calloc(1, sizeof(Table));
+	table->constant = constant;
+	table->column = column;
+	table->type = MULTIPLE_COLUMNS;
+	return table;
 }
 
 Table* LonelyTableSemanticAction(Constant* constant) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	Table* table = calloc(1, sizeof(Table));
-	table->constant = constant;
-	table->type = SIMPLE_TABLE;
-	return table;
-}
-
-Table* DoubleTableSemanticAction(Table* leftTable, Table* rightTable) {
-	_logSyntacticAnalyzerAction(__FUNCTION__);
-	Table* table = calloc(1, sizeof(Table));
-	table->leftTable = leftTable;
-	table->rightTable = rightTable;
-	table->type = MULTIPLE_TABLES;
+	table->lonelyConstant = constant;
+	table->type = LONELY_COLUMN;
 	return table;
 }
 

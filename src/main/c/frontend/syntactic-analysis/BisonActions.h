@@ -21,22 +21,22 @@ void shutdownBisonActionsModule();
 
 Program* ExpressionProgramSemanticAction(CompilerState* compilerState, Expression* expression);
 
-Expression* DoubleExpressionSemanticAction(Expression* leftExpression, Expression* rightExpression);
-Expression* LonelyExpressionSemanticAction(StartToken startToken, EndToken endToken, Constant* constant);
+Expression* TokenExpressionSemanticAction(StartToken startToken, EndToken endToken, Constant* contantant, Expression* expression);
 Expression* FactorExpressionSemanticAction(Factor* factor);
 
-Factor* ListFactorSemanticAction(StartToken startToken, EndToken endToken, List* list);
-Factor* LonelyFactorSemanticAction(StartToken startToken, EndToken endToken, Constant* constant);
-Factor* BoldFactorSemanticAction(Bold* bold);
-Factor* ItalicFactorSemanticAction(Italic* italic);
-Factor* UnderlineFactorSemanticAction(Underline* underline);
-Factor* TableFactorSemanticAction(Table* table);
+Factor* ListFactorSemanticAction(StartToken startToken, EndToken endToken, List* list, Factor* factor);
+Factor* TokenFactorSemanticAction(StartToken startToken, EndToken endToken, Constant* constant, Factor *factor);
+Factor* BoldFactorSemanticAction(Bold* bold, Factor* factor);
+Factor* ItalicFactorSemanticAction(Italic* italic, Factor* factor);
+Factor* UnderlineFactorSemanticAction(Underline* underline, Factor* factor);
+Factor* TableFactorSemanticAction(Table* table, Factor* factor);
+Factor* ConstantFactorSemanticAction(Constant* constant);
 
+List* ListSemanticAction(Constant* constant, List* list);
 List* LonelyListSemanticAction(Constant* constant);
-List* DoubleListSemanticAction(List* leftList, List* rightList);
 
+Table* TableSemanticAction(Constant* constant, Table* table);
 Table* LonelyTableSemanticAction(Constant* constant);
-Table* DoubleTableSemanticAction(Table* leftTable, Table* rightTable);
 
 Bold* LonelyBoldSemanticAction(StartToken startToken, EndToken endToken, Constant* constant);
 Bold* ItalicFromBoldSemanticAction(BoldItalic* boldItalic);

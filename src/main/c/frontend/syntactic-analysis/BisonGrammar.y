@@ -42,10 +42,10 @@
  * @see https://www.gnu.org/software/bison/manual/html_node/Destructor-Decl.html
  */
 /*
-%destructor { releaseConstant($$); } <constant>
-%destructor { releaseExpression($$); } <expression>
-%destructor { releaseFactor($$); } <factor>
-%destructor { releaseProgram($$); } <program>
+%destructor { freeConstant($$); } <constant>
+%destructor { freeExpression($$); } <expression>
+%destructor { freeFactor($$); } <factor>
+%destructor { freeProgram($$); } <program>
 */
 
 /** Terminals. */
@@ -110,53 +110,54 @@
  * @see https://www.gnu.org/software/bison/manual/html_node/Precedence.html
  */
 
-%left STRING
+/* %left STRING
 %left UNDERLINE_START UNDERLINE_END
 %left ITALIC_START ITALIC_END
 %left BOLD_START BOLD_END
 %left LIST_ITEM_START LIST_ITEM_END CELL_SEPARATOR_START CELL_SEPARATOR_END
 %left TABLE_START TABLE_END UNORDERED_LIST_START UNORDERED_LIST_END ORDERED_LIST_START ORDERED_LIST_END
-%left TITLE_START TITLE_END HEADING_1_START HEADING_1_END HEADING_2_START HEADING_2_END HEADING_3_START HEADING_3_END PAGE_SKIP_START PAGE_SKIP_END IMAGE_START IMAGE_END CODE_START CODE_END ESCAPE_START ESCAPE_END EQUATION_START EQUATION_END
+%left TITLE_START TITLE_END HEADING_1_START HEADING_1_END HEADING_2_START HEADING_2_END HEADING_3_START HEADING_3_END PAGE_SKIP_START PAGE_SKIP_END IMAGE_START IMAGE_END CODE_START CODE_END ESCAPE_START ESCAPE_END EQUATION_START EQUATION_END */
 
 %%
 
-program: expression																		{ $$ = ExpressionProgramSemanticAction(currentCompilerState(), $1); }
+program:
+ 	  expression																			{ $$ = ExpressionProgramSemanticAction(currentCompilerState(), $1); }
 	;
 
 expression:
-			expression[left]				expression[right]							{ $$ = DoubleExpressionSemanticAction($left, $right); }
-	| TITLE_START 				constant 			TITLE_END							{ $$ = LonelyExpressionSemanticAction(TITLE_START, TITLE_END, $2); }
-	| HEADING_1_START 			constant		 	HEADING_1_END						{ $$ = LonelyExpressionSemanticAction(HEADING_1_START, HEADING_1_END, $2); }
-	| HEADING_2_START 			constant		 	HEADING_2_END						{ $$ = LonelyExpressionSemanticAction(HEADING_2_START, HEADING_2_END, $2); }
-	| HEADING_3_START 			constant		 	HEADING_3_END						{ $$ = LonelyExpressionSemanticAction(HEADING_3_START, HEADING_3_END, $2); }
-	| PAGE_SKIP_START 			constant		 	PAGE_SKIP_END						{ $$ = LonelyExpressionSemanticAction(PAGE_SKIP_START, PAGE_SKIP_END, $2); }
-	| IMAGE_START 				constant		 	IMAGE_END							{ $$ = LonelyExpressionSemanticAction(IMAGE_START, IMAGE_END, $2); }
-	| CODE_START 				constant		 	CODE_END							{ $$ = LonelyExpressionSemanticAction(CODE_START, CODE_END, $2); }
-	| ESCAPE_START 				constant		 	ESCAPE_END							{ $$ = LonelyExpressionSemanticAction(ESCAPE_START, ESCAPE_END, $2); }
-	| EQUATION_START 			constant		 	EQUATION_END						{ $$ = LonelyExpressionSemanticAction(EQUATION_START, EQUATION_END, $2); }
-	| factor																			{ $$ = FactorExpressionSemanticAction($1); }
+	  TITLE_START 				constant 			TITLE_END				expression		{ $$ = TokenExpressionSemanticAction(TITLE_START, TITLE_END, $2, $4); }
+	| HEADING_1_START 			constant		 	HEADING_1_END			expression  	{ $$ = TokenExpressionSemanticAction(HEADING_1_START, HEADING_1_END, $2, $4); }
+	| HEADING_2_START 			constant		 	HEADING_2_END			expression		{ $$ = TokenExpressionSemanticAction(HEADING_1_START, HEADING_1_END, $2, $4); }
+	| HEADING_3_START 			constant		 	HEADING_3_END			expression		{ $$ = TokenExpressionSemanticAction(HEADING_1_START, HEADING_1_END, $2, $4); }
+	| PAGE_SKIP_START 			constant		 	PAGE_SKIP_END			expression		{ $$ = TokenExpressionSemanticAction(PAGE_SKIP_START, PAGE_SKIP_END, $2, $4); }
+	| IMAGE_START 				constant		 	IMAGE_END				expression		{ $$ = TokenExpressionSemanticAction(IMAGE_START, IMAGE_END, $2, $4); }
+	| CODE_START 				constant		 	CODE_END				expression		{ $$ = TokenExpressionSemanticAction(CODE_START, CODE_END, $2, $4); }
+	| ESCAPE_START 				constant		 	ESCAPE_END				expression		{ $$ = TokenExpressionSemanticAction(ESCAPE_START, ESCAPE_END, $2, $4); }
+	| EQUATION_START 			constant		 	EQUATION_END			expression		{ $$ = TokenExpressionSemanticAction(EQUATION_START, EQUATION_END, $2, $4); }
+	| factor																				{ $$ = FactorExpressionSemanticAction($1); }
 	;
 
 factor:
-		UNORDERED_LIST_START 	list				UNORDERED_LIST_END					{ $$ = ListFactorSemanticAction(UNORDERED_LIST_START, UNORDERED_LIST_END, $2); }
-	| ORDERED_LIST_START 		list	 			ORDERED_LIST_END					{ $$ = ListFactorSemanticAction(ORDERED_LIST_START, ORDERED_LIST_END, $2); }
-	| BOLD_START 				bold	 			BOLD_END							{ $$ = BoldFactorSemanticAction($2); }
-	| BOLD_START 				constant 			BOLD_END							{ $$ = LonelyFactorSemanticAction(BOLD_START, BOLD_END, $2); }
-	| ITALIC_START 				italic		 		ITALIC_END							{ $$ = ItalicFactorSemanticAction($2); }
-	| ITALIC_START 				constant 			ITALIC_END							{ $$ = LonelyFactorSemanticAction(ITALIC_START, ITALIC_END, $2); }
-	| UNDERLINE_START 			underline	 		UNDERLINE_END						{ $$ = UnderlineFactorSemanticAction($2); }
-	| UNDERLINE_START 			constant 			UNDERLINE_END						{ $$ = LonelyFactorSemanticAction(UNDERLINE_START, UNDERLINE_END, $2); }
-	| TABLE_START 				table				TABLE_END							{ $$ = TableFactorSemanticAction($2); }
+		UNORDERED_LIST_START 	list				UNORDERED_LIST_END		factor			{ $$ = ListFactorSemanticAction(UNORDERED_LIST_START, UNORDERED_LIST_END, $2, $4); }
+	| ORDERED_LIST_START 		list	 			ORDERED_LIST_END		factor			{ $$ = ListFactorSemanticAction(ORDERED_LIST_START, ORDERED_LIST_END, $2, $4); }
+	| BOLD_START 				bold	 			BOLD_END				factor			{ $$ = BoldFactorSemanticAction($2, $4); }
+	| BOLD_START 				constant 			BOLD_END				factor			{ $$ = TokenFactorSemanticAction(BOLD_START, BOLD_END, $2, $4); }
+	| ITALIC_START 				italic		 		ITALIC_END				factor			{ $$ = ItalicFactorSemanticAction($2, $4); }
+	| ITALIC_START 				constant 			ITALIC_END				factor			{ $$ = TokenFactorSemanticAction(ITALIC_START, ITALIC_END, $2, $4); }
+	| UNDERLINE_START 			underline	 		UNDERLINE_END			factor			{ $$ = UnderlineFactorSemanticAction($2, $4); }
+	| UNDERLINE_START 			constant 			UNDERLINE_END			factor			{ $$ = TokenFactorSemanticAction(UNDERLINE_START, UNDERLINE_END, $2, $4); }
+	| TABLE_START 				table				TABLE_END				factor			{ $$ = TableFactorSemanticAction($2, $4); }
+	| constant 																				{ $$ = ConstantFactorSemanticAction($1); }
 ;
 
 list:
-		LIST_ITEM_START 		constant 			LIST_ITEM_END						{ $$ = LonelyListSemanticAction($2); }
-	|				list[left]				list[right]									{ $$ = DoubleListSemanticAction($left, $right); }
+		LIST_ITEM_START 		constant 			LIST_ITEM_END			list			{ $$ = ListSemanticAction($2, $4); }
+	|	LIST_ITEM_START 		constant 			LIST_ITEM_END							{ $$ = LonelyListSemanticAction($2); }
 ;
 
 table:
-		CELL_SEPARATOR_START 	constant 			CELL_SEPARATOR_END					{ $$ = LonelyTableSemanticAction($2);}
-	|				table[left]				table[right]								{ $$ = DoubleTableSemanticAction($left, $right); }
+		CELL_SEPARATOR_START 	constant 			CELL_SEPARATOR_END		table			{ $$ = TableSemanticAction($2, $4); }
+	|	CELL_SEPARATOR_START 	constant 			CELL_SEPARATOR_END						{ $$ = LonelyTableSemanticAction($2); }	
 ;
 
 bold:

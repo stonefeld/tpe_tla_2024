@@ -42,7 +42,7 @@ const int main(const int count, const char** arguments) {
 		// 	compilationStatus = FAILED;
 		// }
 		// logDebugging(logger, "Releasing AST resources...");
-		releaseProgram(program);
+		freeProgram(program);
 	} else {
 		logError(logger, "The syntactic-analysis phase rejects the input program.");
 		compilationStatus = FAILED;

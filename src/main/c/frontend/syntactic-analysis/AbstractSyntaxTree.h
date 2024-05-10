@@ -79,9 +79,8 @@ enum EndToken {
 typedef enum EndToken EndToken;
 
 enum ExpressionType {
+	TOKEN_EXPRESSION,
 	FACTOR,
-	MULTIPLE_EXPRESSIONS,
-	SIMPLE_EXPRESSION,
 };
 
 enum FactorType {
@@ -90,17 +89,18 @@ enum FactorType {
 	ITALIC,
 	UNDERLINE,
 	TABLE,
-	SIMPLE_FACTOR,
-};
-
-enum TableType {
-	MULTIPLE_TABLES,
-	SIMPLE_TABLE,
+	TOKEN,
+	CONSTANT,
 };
 
 enum ListType {
-	MULTIPLE_LISTS,
-	SIMPLE_LIST,
+	LONELY_ITEM,
+	MULTIPLE_ITEMS,
+};
+
+enum TableType {
+	LONELY_COLUMN,
+	MULTIPLE_COLUMNS,
 };
 
 enum BoldType {
@@ -121,13 +121,13 @@ enum UnderlineType {
 	UNDERLINE_CONSTANT,
 };
 
-typedef enum ListType ListType;
-typedef enum TableType TableType;
 typedef enum BoldType BoldType;
 typedef enum ItalicType ItalicType;
 typedef enum UnderlineType UnderlineType;
 typedef enum ExpressionType ExpressionType;
 typedef enum FactorType FactorType;
+typedef enum ListType ListType;
+typedef enum TableType TableType;
 
 struct Constant {
 	const char *value;
@@ -199,10 +199,10 @@ struct Underline {
 struct List {
 	union {
 		struct {
-			List *leftList;
-			List *rightList;
+			Constant *constant;
+			List *item;
 		};
-		Constant *constant;
+		Constant *lonelyConstant;
 	};
 	ListType type;
 };
@@ -210,10 +210,10 @@ struct List {
 struct Table {
 	union {
 		struct {
-			Table *leftTable;
-			Table *rightTable;
+			Constant *constant;
+			Table *column;
 		};
-		Constant *constant;
+		Constant *lonelyConstant;
 	};
 	TableType type;
 };
@@ -224,16 +224,31 @@ struct Factor {
 			StartToken startListToken;
 			List *list;
 			EndToken endListToken;
+			Factor *listFactor;
 		};
-		Bold *bold;
-		Italic *italic;
-		Underline *underline;
-		Table *table;
+		struct {
+			Bold *bold;
+			Factor* boldFactor;
+		};
+		struct {
+			Italic *italic;
+			Factor* italicFactor;
+		};
+		struct {
+			Underline *underline;
+			Factor* underlineFactor;
+		};
+		struct {
+			Table *table;
+			Factor* tableFactor;
+		};
 		struct {
 			StartToken startToken;
-			Constant *constant;
+			Constant *tokenConstant;
 			EndToken endToken;
+			Factor *tokenFactor;
 		};
+		Constant *lonelyConstant;
 	};
 	FactorType type;
 };
@@ -242,16 +257,13 @@ struct Expression {
 	union {
 		Factor *factor;
 		struct {
-			Expression *leftExpression;
-			Expression *rightExpression;
-		};
-		struct {
 			StartToken startToken;
 			Constant *constant;
 			EndToken endToken;
+			Expression *expression;
 		};
-		ExpressionType type;
 	};
+	ExpressionType type;
 };
 
 struct Program {
@@ -261,20 +273,20 @@ struct Program {
 /**
  * Node recursive destructors.
  */
-void releaseProgram(Program *program);
-void releaseExpression(Expression *expression);
-void releaseFactor(Factor *factor);
-void releaseList(List *list);
-void releaseTable(Table *table);
-void releaseBold(Bold *bold);
-void releaseItalic(Italic *italic);
-void releaseUnderline(Underline *underline);
-void releaseBoldItalic(BoldItalic *boldItalic);
-void releaseBoldUnderline(BoldUnderline *boldUnderline);
-void releaseItalicBold(ItalicBold *italicBold);
-void releaseItalicUnderline(ItalicUnderline *italicUnderline);
-void releaseUnderlineBold(UnderlineBold *underlineBold);
-void releaseUnderlineItalic(UnderlineItalic *underlineItalic);
-void releaseConstant(Constant *constant);
+void freeProgram(Program *program);
+void freeExpression(Expression *expression);
+void freeFactor(Factor *factor);
+void freeList(List *list);
+void freeTable(Table *table);
+void freeBold(Bold *bold);
+void freeItalic(Italic *italic);
+void freeUnderline(Underline *underline);
+void freeBoldItalic(BoldItalic *boldItalic);
+void freeBoldUnderline(BoldUnderline *boldUnderline);
+void freeItalicBold(ItalicBold *italicBold);
+void freeItalicUnderline(ItalicUnderline *italicUnderline);
+void freeUnderlineBold(UnderlineBold *underlineBold);
+void freeUnderlineItalic(UnderlineItalic *underlineItalic);
+void freeConstant(Constant *constant);
 
 #endif

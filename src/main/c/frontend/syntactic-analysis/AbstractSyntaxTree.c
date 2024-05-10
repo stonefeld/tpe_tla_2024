@@ -1,4 +1,5 @@
 #include "AbstractSyntaxTree.h"
+#include <stdlib.h>
 
 /* MODULE INTERNAL STATE */
 
@@ -16,157 +17,183 @@ void shutdownAbstractSyntaxTreeModule() {
 
 /** PUBLIC FUNCTIONS */
 
-void releaseProgram(Program* program) {
+void freeProgram(Program* program) {
 	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
 	if (program != NULL) {
-		releaseExpression(program->expression);
+		freeExpression(program->expression);
 		free(program);
 	}
 }
 
-void releaseExpression(Expression* expression) {
+void freeExpression(Expression* expression) {
 	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
 	if (expression != NULL) {
 		switch (expression->type) {
-			case MULTIPLE_EXPRESSIONS:
-				releaseExpression(expression->leftExpression);
-				releaseExpression(expression->rightExpression);
+			case TOKEN_EXPRESSION:
+				freeConstant(expression->constant);
+				freeExpression(expression->expression);
 				break;
-			case SIMPLE_EXPRESSION: releaseConstant(expression->constant); break;
-			case FACTOR: releaseFactor(expression->factor); break;
+			case FACTOR:
+				freeFactor(expression->factor);
+				break;
 		}
 		free(expression);
 	}
 }
 
-void releaseFactor(Factor* factor) {
+void freeFactor(Factor* factor) {
 	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
 	if (factor != NULL) {
 		switch (factor->type) {
-			case LIST: releaseList(factor->list); break;
-			case BOLD: releaseBold(factor->bold); break;
-			case ITALIC: releaseItalic(factor->italic); break;
-			case UNDERLINE: releaseUnderline(factor->underline); break;
-			case TABLE: releaseTable(factor->table); break;
-			case SIMPLE_FACTOR: releaseConstant(factor->constant); break;
+			case LIST:
+				freeList(factor->list);
+				freeFactor(factor->listFactor);
+				break;
+			case BOLD:
+				freeBold(factor->bold);
+				freeFactor(factor->boldFactor);
+				break;
+			case ITALIC:
+				freeItalic(factor->italic);
+				freeFactor(factor->italicFactor);
+				break;
+			case UNDERLINE:
+				freeUnderline(factor->underline);
+				freeFactor(factor->underlineFactor);
+				break;
+			case TABLE:
+				freeTable(factor->table);
+				freeFactor(factor->tableFactor);
+				break;
+			case TOKEN:
+				freeConstant(factor->tokenConstant);
+				freeFactor(factor->tokenFactor);
+				break;
+			case CONSTANT:
+				freeConstant(factor->lonelyConstant);
+				break;
 		}
 		free(factor);
 	}
 }
 
-void releaseTable(Table* table) {
+void freeTable(Table* table) {
 	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
 	if (table != NULL) {
 		switch (table->type) {
-			case MULTIPLE_TABLES:
-				releaseTable(table->leftTable);
-				releaseTable(table->rightTable);
+			case MULTIPLE_COLUMNS:
+				freeTable(table->column);
+				freeConstant(table->constant);
 				break;
-			case SIMPLE_TABLE: releaseConstant(table->constant); break;
+			case LONELY_COLUMN:
+				freeConstant(table->lonelyConstant);
+				break;		
 		}
 		free(table);
 	}
 }
 
-void releaseList(List* list) {
+void freeList(List* list) {
 	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
 	if (list != NULL) {
 		switch (list->type) {
-			case MULTIPLE_LISTS:
-				releaseList(list->leftList);
-				releaseList(list->rightList);
+			case MULTIPLE_ITEMS:
+				freeList(list->item);
+				freeConstant(list->constant);
 				break;
-			case SIMPLE_LIST: releaseConstant(list->constant); break;
+			case LONELY_ITEM:
+				freeConstant(list->lonelyConstant);
+				break;
 		}
 		free(list);
 	}
 }
 
-void releaseBold(Bold* bold) {
+void freeBold(Bold* bold) {
 	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
 	if (bold != NULL) {
 		switch (bold->type) {
-			case BOLD_ITALIC: releaseBoldItalic(bold->boldItalic); break;
-			case BOLD_UNDERLINE: releaseBoldUnderline(bold->boldUnderline); break;
-			case BOLD_CONSTANT: releaseConstant(bold->constant); break;
+			case BOLD_ITALIC: freeBoldItalic(bold->boldItalic); break;
+			case BOLD_UNDERLINE: freeBoldUnderline(bold->boldUnderline); break;
+			case BOLD_CONSTANT: freeConstant(bold->constant); break;
 		}
 		free(bold);
 	}
 }
 
-void releaseItalic(Italic* italic) {
+void freeItalic(Italic* italic) {
 	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
 	if (italic != NULL) {
 		switch (italic->type) {
-			case ITALIC_BOLD: releaseItalicBold(italic->italicBold); break;
-			case ITALIC_UNDERLINE: releaseItalicUnderline(italic->italicUnderline); break;
-			case ITALIC_CONSTANT: releaseConstant(italic->constant); break;
+			case ITALIC_BOLD: freeItalicBold(italic->italicBold); break;
+			case ITALIC_UNDERLINE: freeItalicUnderline(italic->italicUnderline); break;
+			case ITALIC_CONSTANT: freeConstant(italic->constant); break;
 		}
 		free(italic);
 	}
 }
 
-void releaseUnderline(Underline* underline) {
+void freeUnderline(Underline* underline) {
 	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
 	if (underline != NULL) {
 		switch (underline->type) {
-			case UNDERLINE_BOLD: releaseUnderlineBold(underline->underlineBold); break;
-			case UNDERLINE_ITALIC: releaseUnderlineItalic(underline->underlineItalic); break;
-			case UNDERLINE_CONSTANT: releaseConstant(underline->constant); break;
+			case UNDERLINE_BOLD: freeUnderlineBold(underline->underlineBold); break;
+			case UNDERLINE_ITALIC: freeUnderlineItalic(underline->underlineItalic); break;
+			case UNDERLINE_CONSTANT: freeConstant(underline->constant); break;
 		}
 		free(underline);
 	}
 }
 
-void releaseBoldItalic(BoldItalic* boldItalic) {
+void freeBoldItalic(BoldItalic* boldItalic) {
 	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
 	if (boldItalic != NULL) {
-		releaseConstant(boldItalic->constant);
+		freeConstant(boldItalic->constant);
 		free(boldItalic);
 	}
 }
 
-void releaseBoldUnderline(BoldUnderline* boldUnderline) {
+void freeBoldUnderline(BoldUnderline* boldUnderline) {
 	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
 	if (boldUnderline != NULL) {
-		releaseConstant(boldUnderline->constant);
+		freeConstant(boldUnderline->constant);
 		free(boldUnderline);
 	}
 }
 
-void releaseItalicBold(ItalicBold* italicBold) {
+void freeItalicBold(ItalicBold* italicBold) {
 	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
 	if (italicBold != NULL) {
-		releaseConstant(italicBold->constant);
+		freeConstant(italicBold->constant);
 		free(italicBold);
 	}
 }
 
-void releaseItalicUnderline(ItalicUnderline* italicUnderline) {
+void freeItalicUnderline(ItalicUnderline* italicUnderline) {
 	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
 	if (italicUnderline != NULL) {
-		releaseConstant(italicUnderline->constant);
+		freeConstant(italicUnderline->constant);
 		free(italicUnderline);
 	}
 }
 
-void releaseUnderlineBold(UnderlineBold* underlineBold) {
+void freeUnderlineBold(UnderlineBold* underlineBold) {
 	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
 	if (underlineBold != NULL) {
-		releaseConstant(underlineBold->constant);
+		freeConstant(underlineBold->constant);
 		free(underlineBold);
 	}
 }
 
-void releaseUnderlineItalic(UnderlineItalic* underlineItalic) {
+void freeUnderlineItalic(UnderlineItalic* underlineItalic) {
 	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
 	if (underlineItalic != NULL) {
-		releaseConstant(underlineItalic->constant);
+		freeConstant(underlineItalic->constant);
 		free(underlineItalic);
 	}
 }
 
-void releaseConstant(Constant* constant) {
+void freeConstant(Constant* constant) {
 	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
 	if (constant != NULL) {
 		free(constant);

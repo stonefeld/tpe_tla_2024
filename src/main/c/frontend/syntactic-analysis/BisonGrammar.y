@@ -14,6 +14,20 @@
 
 	/** Non-terminals. */
 
+	UnderlineItalic *underlineItalic;
+	UnderlineBold *underlineBold;
+	Underline *underline;
+
+	ItalicUnderline *italicUnderline;
+	ItalicBold *italicBold;
+	Italic *italic;
+
+	BoldUnderline *boldUnderline;
+	BoldItalic *boldItalic;
+	Bold *bold;
+
+	Table *table;
+	List *list;
 	Constant * constant;
 	Factor * factor;
 	Expression * expression;
@@ -36,17 +50,56 @@
 
 /** Terminals. */
 %token <string> STRING
-%token <token> ADD
-%token <token> CLOSE_PARENTHESIS
-%token <token> DIV
-%token <token> MUL
-%token <token> OPEN_PARENTHESIS
-%token <token> SUB
+%token <token> TITLE_END
+%token <token> TITLE_START
+%token <token> HEADING_1_END
+%token <token> HEADING_1_START
+%token <token> HEADING_2_END
+%token <token> HEADING_2_START
+%token <token> HEADING_3_END
+%token <token> HEADING_3_START
+%token <token> PAGE_SKIP_END
+%token <token> PAGE_SKIP_START
+%token <token> UNORDERED_LIST_END
+%token <token> UNORDERED_LIST_START
+%token <token> ORDERED_LIST_END
+%token <token> ORDERED_LIST_START
+%token <token> LIST_ITEM_END
+%token <token> LIST_ITEM_START
+%token <token> CELL_SEPARATOR_END
+%token <token> CELL_SEPARATOR_START
+%token <token> IMAGE_END
+%token <token> IMAGE_START
+%token <token> BOLD_END
+%token <token> BOLD_START
+%token <token> ITALIC_END
+%token <token> ITALIC_START
+%token <token> UNDERLINE_END
+%token <token> UNDERLINE_START
+%token <token> TABLE_END
+%token <token> TABLE_START
+%token <token> CODE_END
+%token <token> CODE_START
+%token <token> ESCAPE_END
+%token <token> ESCAPE_START
+%token <token> EQUATION_END
+%token <token> EQUATION_START
 
-%token <token> UNKNOWN
+/* %token <token> UNKNOWN */
 
 /** Non-terminals. */
 %type <constant> constant
+%type <list> list
+%type <bold> bold
+%type <boldItalic> bold_italic
+%type <boldUnderline> bold_underline
+%type <italic> italic
+%type <italicBold> italic_bold
+%type <italicUnderline> italic_underline
+%type <underline> underline
+%type <underlineBold> underline_bold
+%type <underlineItalic> underline_italic
+%type <table> table
 %type <expression> expression
 %type <factor> factor
 %type <program> program
@@ -56,26 +109,102 @@
  *
  * @see https://www.gnu.org/software/bison/manual/html_node/Precedence.html
  */
-%left ADD SUB
-%left MUL DIV
+
+%left STRING
+%left UNDERLINE_START UNDERLINE_END
+%left ITALIC_START ITALIC_END
+%left BOLD_START BOLD_END
+%left LIST_ITEM_START LIST_ITEM_END CELL_SEPARATOR_START CELL_SEPARATOR_END
+%left TABLE_START TABLE_END UNORDERED_LIST_START UNORDERED_LIST_END ORDERED_LIST_START ORDERED_LIST_END
+%left TITLE_START TITLE_END HEADING_1_START HEADING_1_END HEADING_2_START HEADING_2_END HEADING_3_START HEADING_3_END PAGE_SKIP_START PAGE_SKIP_END IMAGE_START IMAGE_END CODE_START CODE_END ESCAPE_START ESCAPE_END EQUATION_START EQUATION_END
 
 %%
 
-program: expression													{ $$ = ExpressionProgramSemanticAction(currentCompilerState(), $1); }
+program: expression																		{ $$ = ExpressionProgramSemanticAction(currentCompilerState(), $1); }
 	;
 
-expression: expression[left] ADD expression[right]					{ $$ = ArithmeticExpressionSemanticAction($left, $right, ADDITION); }
-	| expression[left] DIV expression[right]						{ $$ = ArithmeticExpressionSemanticAction($left, $right, DIVISION); }
-	| expression[left] MUL expression[right]						{ $$ = ArithmeticExpressionSemanticAction($left, $right, MULTIPLICATION); }
-	| expression[left] SUB expression[right]						{ $$ = ArithmeticExpressionSemanticAction($left, $right, SUBTRACTION); }
-	| factor														{ $$ = FactorExpressionSemanticAction($1); }
+expression:
+			expression[left]				expression[right]							{ $$ = DoubleExpressionSemanticAction($left, $right); }
+	| TITLE_START 				constant 			TITLE_END							{ $$ = LonelyExpressionSemanticAction(TITLE_START, TITLE_END, $2); }
+	| HEADING_1_START 			constant		 	HEADING_1_END						{ $$ = LonelyExpressionSemanticAction(HEADING_1_START, HEADING_1_END, $2); }
+	| HEADING_2_START 			constant		 	HEADING_2_END						{ $$ = LonelyExpressionSemanticAction(HEADING_2_START, HEADING_2_END, $2); }
+	| HEADING_3_START 			constant		 	HEADING_3_END						{ $$ = LonelyExpressionSemanticAction(HEADING_3_START, HEADING_3_END, $2); }
+	| PAGE_SKIP_START 			constant		 	PAGE_SKIP_END						{ $$ = LonelyExpressionSemanticAction(PAGE_SKIP_START, PAGE_SKIP_END, $2); }
+	| IMAGE_START 				constant		 	IMAGE_END							{ $$ = LonelyExpressionSemanticAction(IMAGE_START, IMAGE_END, $2); }
+	| CODE_START 				constant		 	CODE_END							{ $$ = LonelyExpressionSemanticAction(CODE_START, CODE_END, $2); }
+	| ESCAPE_START 				constant		 	ESCAPE_END							{ $$ = LonelyExpressionSemanticAction(ESCAPE_START, ESCAPE_END, $2); }
+	| EQUATION_START 			constant		 	EQUATION_END						{ $$ = LonelyExpressionSemanticAction(EQUATION_START, EQUATION_END, $2); }
+	| factor																			{ $$ = FactorExpressionSemanticAction($1); }
 	;
 
-factor: OPEN_PARENTHESIS expression CLOSE_PARENTHESIS				{ $$ = ExpressionFactorSemanticAction($2); }
-	| constant														{ $$ = ConstantFactorSemanticAction($1); }
-	;
+factor:
+		UNORDERED_LIST_START 	list				UNORDERED_LIST_END					{ $$ = ListFactorSemanticAction(UNORDERED_LIST_START, UNORDERED_LIST_END, $2); }
+	| ORDERED_LIST_START 		list	 			ORDERED_LIST_END					{ $$ = ListFactorSemanticAction(ORDERED_LIST_START, ORDERED_LIST_END, $2); }
+	| BOLD_START 				bold	 			BOLD_END							{ $$ = BoldFactorSemanticAction($2); }
+	| BOLD_START 				constant 			BOLD_END							{ $$ = LonelyFactorSemanticAction(BOLD_START, BOLD_END, $2); }
+	| ITALIC_START 				italic		 		ITALIC_END							{ $$ = ItalicFactorSemanticAction($2); }
+	| ITALIC_START 				constant 			ITALIC_END							{ $$ = LonelyFactorSemanticAction(ITALIC_START, ITALIC_END, $2); }
+	| UNDERLINE_START 			underline	 		UNDERLINE_END						{ $$ = UnderlineFactorSemanticAction($2); }
+	| UNDERLINE_START 			constant 			UNDERLINE_END						{ $$ = LonelyFactorSemanticAction(UNDERLINE_START, UNDERLINE_END, $2); }
+	| TABLE_START 				table				TABLE_END							{ $$ = TableFactorSemanticAction($2); }
+;
 
-constant: STRING													{ $$ = StringConstantSemanticAction($1); }
-	;
+list:
+		LIST_ITEM_START 		constant 			LIST_ITEM_END						{ $$ = LonelyListSemanticAction($2); }
+	|				list[left]				list[right]									{ $$ = DoubleListSemanticAction($left, $right); }
+;
+
+table:
+		CELL_SEPARATOR_START 	constant 			CELL_SEPARATOR_END					{ $$ = LonelyTableSemanticAction($2);}
+	|				table[left]				table[right]								{ $$ = DoubleTableSemanticAction($left, $right); }
+;
+
+bold:
+		ITALIC_START			constant					ITALIC_END					{ $$ = LonelyBoldSemanticAction(ITALIC_START, ITALIC_END, $2); }
+	|	ITALIC_START 			bold_italic		 			ITALIC_END					{ $$ = ItalicFromBoldSemanticAction($2); }
+	|	UNDERLINE_START			constant					UNDERLINE_END				{ $$ = LonelyBoldSemanticAction(UNDERLINE_START, UNDERLINE_END, $2); }
+	|	UNDERLINE_START			bold_underline				UNDERLINE_END				{ $$ = UnderlineFromBoldSemanticAction($2); }
+;
+
+bold_italic:
+		UNDERLINE_START			constant					UNDERLINE_END				{ $$ = LonelyBoldItalicSemanticAction($2); }
+;
+
+bold_underline:
+		ITALIC_START 			constant					ITALIC_END					{ $$ = LonelyBoldUnderlineSemanticAction($2); }
+;
+
+italic:
+		BOLD_START 				italic_bold 				BOLD_END					{ $$ = BoldFromItalicSemanticAction($2); }
+	|	BOLD_START				constant					BOLD_START					{ $$ = LonelyItalicSemanticAction(BOLD_START, BOLD_END, $2); }
+	|	UNDERLINE_START			italic_underline			UNDERLINE_END				{ $$ = UnderlineFromItalicSemanticAction($2); }
+	|	UNDERLINE_START			constant					UNDERLINE_END				{ $$ = LonelyItalicSemanticAction(UNDERLINE_START, UNDERLINE_END, $2) }
+;
+
+italic_bold:
+		UNDERLINE_START			constant					UNDERLINE_END				{ $$ = LonelyItalicBoldSemanticAction($2); }
+;
+
+italic_underline:
+		BOLD_START 				constant					BOLD_END					{ $$ = LonelyItalicUnderlineSemanticAction($2); }
+;
+
+underline:
+		BOLD_START 				underline_bold		 		BOLD_END					{ $$ = BoldFromUnderlineSemanticAction($2); }
+	|	BOLD_START 				constant			 		BOLD_END					{ $$ = LonelyUnderlineSemanticAction(BOLD_START, BOLD_END, $2); }
+	|	ITALIC_START			underline_italic			ITALIC_END					{ $$ = ItalicFromUnderlineSemanticAction($2); }
+	|	ITALIC_START			constant					ITALIC_END					{ $$ = LonelyUnderlineSemanticAction(ITALIC_START, ITALIC_END, $2); }
+;
+
+underline_bold:
+		ITALIC_START			constant					ITALIC_END					{ $$ = LonelyUnderlineBoldSemanticAction($2); }
+;
+
+underline_italic:
+		BOLD_START 				constant					BOLD_END					{ $$ = LonelyUnderlineItalicSemanticAction($2);}
+;
+
+constant: STRING																		{ $$ = StringConstantSemanticAction($1); }
+;
 
 %%

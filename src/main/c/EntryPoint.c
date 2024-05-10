@@ -12,8 +12,8 @@
 /**
  * The main entry-point of the entire application.
  */
-const int main(const int count, const char ** arguments) {
-	Logger * logger = createLogger("EntryPoint");
+const int main(const int count, const char** arguments) {
+	Logger* logger = createLogger("EntryPoint");
 	initializeFlexActionsModule();
 	initializeBisonActionsModule();
 	initializeSyntacticAnalyzerModule();
@@ -27,29 +27,23 @@ const int main(const int count, const char ** arguments) {
 	}
 
 	// Begin compilation process.
-	CompilerState compilerState = {
-		.abstractSyntaxtTree = NULL,
-		.succeed = false,
-		.value = 0
-	};
+	CompilerState compilerState = {.abstractSyntaxtTree = NULL, .succeed = false, .value = 0};
 	const SyntacticAnalysisStatus syntacticAnalysisStatus = parse(&compilerState);
 	CompilationStatus compilationStatus = SUCCEED;
 	if (syntacticAnalysisStatus == ACCEPT) {
 		logDebugging(logger, "Computing expression value...");
-		Program * program = compilerState.abstractSyntaxtTree;
-		ComputationResult computationResult = computeExpression(program->expression);
-		if (computationResult.succeed) {
-			compilerState.value = computationResult.value;
-			generate(&compilerState);
-		}
-		else {
-			logError(logger, "The computation phase rejects the input program.");
-			compilationStatus = FAILED;
-		}
-		logDebugging(logger, "Releasing AST resources...");
+		Program* program = compilerState.abstractSyntaxtTree;
+		// ComputationResult computationResult = computeExpression(program->expression);
+		// if (computationResult.succeed) {
+		// 	compilerState.value = computationResult.value;
+		// 	generate(&compilerState);
+		// } else {
+		// 	logError(logger, "The computation phase rejects the input program.");
+		// 	compilationStatus = FAILED;
+		// }
+		// logDebugging(logger, "Releasing AST resources...");
 		releaseProgram(program);
-	}
-	else {
+	} else {
 		logError(logger, "The syntactic-analysis phase rejects the input program.");
 		compilationStatus = FAILED;
 	}

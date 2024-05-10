@@ -2,13 +2,13 @@
 
 /* PRIVATE FUNCTIONS */
 
-static const char * _controlCharacterToEscapedString(const char character);
+static const char *_controlCharacterToEscapedString(const char character);
 
 /**
  * Returns a read-only string that represents the escaped sequence of the
  * control character. If the character is not a control, then returns NULL.
  */
-static const char * _controlCharacterToEscapedString(const char character) {
+static const char *_controlCharacterToEscapedString(const char character) {
 	switch (character) {
 		case 0x00: return "\\0";
 		case 0x01: return "\\x01";
@@ -43,49 +43,46 @@ static const char * _controlCharacterToEscapedString(const char character) {
 		case 0x1E: return "\\x1E";
 		case 0x1F: return "\\x1F";
 		case 0x7F: return "\\x7F";
-		default:
-			return NULL;
+		default: return NULL;
 	}
 }
 
 /* PUBLIC FUNCTIONS */
 
-char * concatenate(const unsigned int count, ...) {
+char *concatenate(const unsigned int count, ...) {
 	va_list arguments;
 	va_start(arguments, count);
 	unsigned int length = 1;
 	for (unsigned int k = 0; k < count; ++k) {
-		const char * nextString = va_arg(arguments, const char *);
+		const char *nextString = va_arg(arguments, const char *);
 		length += strlen(nextString);
 	}
 	va_end(arguments);
-	char * string = calloc(length, sizeof(char));
+	char *string = calloc(length, sizeof(char));
 	va_start(arguments, count);
 	for (unsigned int k = 0; k < count; ++k) {
-		const char * nextString = va_arg(arguments, const char *);
+		const char *nextString = va_arg(arguments, const char *);
 		strcat(string, nextString);
 	}
 	va_end(arguments);
 	return string;
 }
 
-char * escape(const char * string) {
+char *escape(const char *string) {
 	unsigned int length = 1;
 	for (unsigned int k = 0; 0 < string[k]; ++k) {
 		if (iscntrl(string[k])) {
 			length += strlen(_controlCharacterToEscapedString(string[k]));
-		}
-		else {
+		} else {
 			length += 1;
 		}
 	}
-	char * escapedString = calloc(length, sizeof(char));
-	char charToString[2] = { 0, 0 };
+	char *escapedString = calloc(length, sizeof(char));
+	char charToString[2] = {0, 0};
 	for (unsigned int k = 0; 0 < string[k]; ++k) {
 		if (iscntrl(string[k])) {
 			strcat(escapedString, _controlCharacterToEscapedString(string[k]));
-		}
-		else {
+		} else {
 			charToString[0] = string[k];
 			strcat(escapedString, charToString);
 		}
@@ -93,9 +90,9 @@ char * escape(const char * string) {
 	return escapedString;
 }
 
-char * indentation(const char character, const unsigned int level, const unsigned int size) {
+char *indentation(const char character, const unsigned int level, const unsigned int size) {
 	const unsigned int indentationLength = level * size;
-	char * indentation = calloc(1 + indentationLength, sizeof(char));
+	char *indentation = calloc(1 + indentationLength, sizeof(char));
 	for (int k = 0; k < indentationLength; ++k) {
 		indentation[k] = character;
 	}

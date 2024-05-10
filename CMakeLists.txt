@@ -1,6 +1,7 @@
 # Minimum required version fo CMake. Can be modified at your own risk.
 # @see https://cmake.org/download/
 cmake_minimum_required(VERSION 3.22)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # Name of the project and language to use (C, in this case).
 project(Compiler C)

@@ -3,6 +3,7 @@
 /.git/
 /.vs/
 /.vscode/
+/.cache/
 /bin/
 /build/
 /cache/
@@ -15,6 +16,7 @@
 .env*
 *.csproj.user
 *~
+compile_commands.json
 
 # Application specific.
 /program

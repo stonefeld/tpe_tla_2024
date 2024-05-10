@@ -47,7 +47,7 @@ Program* ExpressionProgramSemanticAction(CompilerState* compilerState, Expressio
 	return program;
 }
 
-Expression* TokenExpressionSemanticAction(StartToken startToken, EndToken endToken, Constant* contantant, Expression* expression) {
+Expression* TokenExpressionSemanticAction(Token startToken, Token endToken, Constant* contantant, Expression* expression) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	Expression* tokenExpression = calloc(1, sizeof(Expression));
 	tokenExpression->startToken = startToken;
@@ -66,7 +66,7 @@ Expression* FactorExpressionSemanticAction(Factor* factor) {
 	return factorExpression;
 }
 
-Factor* ListFactorSemanticAction(StartToken startToken, EndToken endToken, List* list, Factor* factor) {
+Factor* ListFactorSemanticAction(Token startToken, Token endToken, List* list, Factor* factor) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	Factor* listFactor = calloc(1, sizeof(Factor));
 	listFactor->startListToken = startToken;
@@ -78,7 +78,7 @@ Factor* ListFactorSemanticAction(StartToken startToken, EndToken endToken, List*
 
 }
 
-Factor* TokenFactorSemanticAction(StartToken startToken, EndToken endToken, Constant* constant, Factor *factor) {
+Factor* TokenFactorSemanticAction(Token startToken, Token endToken, Constant* constant, Factor *factor) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	Factor* tokenFactor = calloc(1, sizeof(Factor));
 	tokenFactor->startToken = startToken;
@@ -168,7 +168,7 @@ Table* LonelyTableSemanticAction(Constant* constant) {
 	return table;
 }
 
-Bold* LonelyBoldSemanticAction(StartToken startToken, EndToken endToken, Constant* constant) {
+Bold* LonelyBoldSemanticAction(Token startToken, Token endToken, Constant* constant) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	Bold* bold = calloc(1, sizeof(Bold));
 	bold->startToken = startToken;
@@ -208,7 +208,7 @@ BoldUnderline* LonelyBoldUnderlineSemanticAction(Constant* constant) {
 	return boldUnderline;
 }
 
-Italic* LonelyItalicSemanticAction(StartToken startToken, EndToken endToken, Constant* constant) {
+Italic* LonelyItalicSemanticAction(Token startToken, Token endToken, Constant* constant) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	Italic* italic = calloc(1, sizeof(Italic));
 	italic->startToken = startToken;
@@ -248,7 +248,7 @@ ItalicUnderline* LonelyItalicUnderlineSemanticAction(Constant* constant) {
 	return italicUnderline;
 }
 
-Underline* LonelyUnderlineSemanticAction(StartToken startToken, EndToken endToken, Constant* constant) {
+Underline* LonelyUnderlineSemanticAction(Token startToken, Token endToken, Constant* constant) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	Underline* underline = calloc(1, sizeof(Underline));
 	underline->startToken = startToken;

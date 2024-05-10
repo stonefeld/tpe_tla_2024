@@ -21,11 +21,11 @@ void shutdownBisonActionsModule();
 
 Program* ExpressionProgramSemanticAction(CompilerState* compilerState, Expression* expression);
 
-Expression* TokenExpressionSemanticAction(StartToken startToken, EndToken endToken, Constant* contantant, Expression* expression);
+Expression* TokenExpressionSemanticAction(Token startToken, Token endToken, Constant* contantant, Expression* expression);
 Expression* FactorExpressionSemanticAction(Factor* factor);
 
-Factor* ListFactorSemanticAction(StartToken startToken, EndToken endToken, List* list, Factor* factor);
-Factor* TokenFactorSemanticAction(StartToken startToken, EndToken endToken, Constant* constant, Factor *factor);
+Factor* ListFactorSemanticAction(Token startToken, Token endToken, List* list, Factor* factor);
+Factor* TokenFactorSemanticAction(Token startToken, Token endToken, Constant* constant, Factor *factor);
 Factor* BoldFactorSemanticAction(Bold* bold, Factor* factor);
 Factor* ItalicFactorSemanticAction(Italic* italic, Factor* factor);
 Factor* UnderlineFactorSemanticAction(Underline* underline, Factor* factor);
@@ -38,21 +38,21 @@ List* LonelyListSemanticAction(Constant* constant);
 Table* TableSemanticAction(Constant* constant, Table* table);
 Table* LonelyTableSemanticAction(Constant* constant);
 
-Bold* LonelyBoldSemanticAction(StartToken startToken, EndToken endToken, Constant* constant);
+Bold* LonelyBoldSemanticAction(Token startToken, Token endToken, Constant* constant);
 Bold* ItalicFromBoldSemanticAction(BoldItalic* boldItalic);
 Bold* UnderlineFromBoldSemanticAction(BoldUnderline* boldUnderline);
 
 BoldItalic* LonelyBoldItalicSemanticAction(Constant* constant);
 BoldUnderline* LonelyBoldUnderlineSemanticAction(Constant* constant);
 
-Italic* LonelyItalicSemanticAction(StartToken startToken, EndToken endToken, Constant* constant);
+Italic* LonelyItalicSemanticAction(Token startToken, Token endToken, Constant* constant);
 Italic* BoldFromItalicSemanticAction(ItalicBold* italicBold);
 Italic* UnderlineFromItalicSemanticAction(ItalicUnderline* italicUnderline);
 
 ItalicBold* LonelyItalicBoldSemanticAction(Constant* constant);
 ItalicUnderline* LonelyItalicUnderlineSemanticAction(Constant* constant);
 
-Underline* LonelyUnderlineSemanticAction(StartToken startToken, EndToken endToken, Constant* constant);
+Underline* LonelyUnderlineSemanticAction(Token startToken, Token endToken, Constant* constant);
 Underline* BoldFromUnderlineSemanticAction(UnderlineBold* underlineBold);
 Underline* ItalicFromUnderlineSemanticAction(UnderlineItalic* underlineItalic);
 

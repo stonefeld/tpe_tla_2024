@@ -37,47 +37,6 @@ typedef struct Program Program;
  * Node types for the Abstract Syntax Tree (AST).
  */
 
-enum StartToken {
-	TITLE_START,
-	HEADING_1_START,
-	HEADING_2_START,
-	HEADING_3_START,
-	PAGE_SKIP_START,
-	UNORDERED_LIST_START,
-	ORDERED_LIST_START,
-	LIST_ITEM_START,
-	CELL_SEPARATOR_START,
-	IMAGE_START,
-	BOLD_START,
-	ITALIC_START,
-	UNDERLINE_START,
-	TABLE_START,
-	CODE_START,
-	ESPACE_START,
-	EQUATION_START,
-};
-typedef enum StartToken StartToken;
-
-enum EndToken {
-	TITLE_END,
-	HEADING_1_END,
-	HEADING_2_END,
-	HEADING_3_END,
-	PAGE_SKIP_END,
-	UNORDERED_LIST_END,
-	ORDERED_LIST_END,
-	LIST_ITEM_END,
-	CELL_SEPARATOR_END,
-	IMAGE_END,
-	BOLD_END,
-	ITALIC_END,
-	UNDERLINE_END,
-	TABLE_END,
-	CODE_END,
-	ESPACE_END,
-};
-typedef enum EndToken EndToken;
-
 enum ExpressionType {
 	TOKEN_EXPRESSION,
 	FACTOR,
@@ -162,9 +121,9 @@ struct Bold {
 		BoldItalic *boldItalic;
 		BoldUnderline *boldUnderline;
 		struct {
-			StartToken startToken;
+			Token startToken;
 			Constant *constant;
-			EndToken endToken;
+			Token endToken;
 		};
 	};
 	BoldType type;
@@ -175,9 +134,9 @@ struct Italic {
 		ItalicBold *italicBold;
 		ItalicUnderline *italicUnderline;
 		struct {
-			StartToken startToken;
+			Token startToken;
 			Constant *constant;
-			EndToken endToken;
+			Token endToken;
 		};
 	};
 	ItalicType type;
@@ -188,9 +147,9 @@ struct Underline {
 		UnderlineBold *underlineBold;
 		UnderlineItalic *underlineItalic;
 		struct {
-			StartToken startToken;
+			Token startToken;
 			Constant *constant;
-			EndToken endToken;
+			Token endToken;
 		};
 	};
 	UnderlineType type;
@@ -221,9 +180,9 @@ struct Table {
 struct Factor {
 	union {
 		struct {
-			StartToken startListToken;
+			Token startListToken;
 			List *list;
-			EndToken endListToken;
+			Token endListToken;
 			Factor *listFactor;
 		};
 		struct {
@@ -243,9 +202,9 @@ struct Factor {
 			Factor* tableFactor;
 		};
 		struct {
-			StartToken startToken;
+			Token startToken;
 			Constant *tokenConstant;
-			EndToken endToken;
+			Token endToken;
 			Factor *tokenFactor;
 		};
 		Constant *lonelyConstant;
@@ -257,9 +216,9 @@ struct Expression {
 	union {
 		Factor *factor;
 		struct {
-			StartToken startToken;
+			Token startToken;
 			Constant *constant;
-			EndToken endToken;
+			Token endToken;
 			Expression *expression;
 		};
 	};

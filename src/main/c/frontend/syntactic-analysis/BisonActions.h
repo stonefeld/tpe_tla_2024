@@ -21,11 +21,12 @@ void shutdownBisonActionsModule();
 
 Program* ExpressionProgramSemanticAction(CompilerState* compilerState, Expression* expression);
 
-Expression* TokenExpressionSemanticAction(Token startToken, Token endToken, Constant* contantant, Expression* expression);
+Expression* TokenExpressionSemanticAction(Token startToken, Token endToken, Constant* contantant,
+                                          Expression* expression);
 Expression* FactorExpressionSemanticAction(Factor* factor);
 
 Factor* ListFactorSemanticAction(Token startToken, Token endToken, List* list, Factor* factor);
-Factor* TokenFactorSemanticAction(Token startToken, Token endToken, Constant* constant, Factor *factor);
+Factor* TokenFactorSemanticAction(Token startToken, Token endToken, Constant* constant, Factor* factor);
 Factor* BoldFactorSemanticAction(Bold* bold, Factor* factor);
 Factor* ItalicFactorSemanticAction(Italic* italic, Factor* factor);
 Factor* UnderlineFactorSemanticAction(Underline* underline, Factor* factor);
@@ -59,6 +60,7 @@ Underline* ItalicFromUnderlineSemanticAction(UnderlineItalic* underlineItalic);
 UnderlineBold* LonelyUnderlineBoldSemanticAction(Constant* constant);
 UnderlineItalic* LonelyUnderlineItalicSemanticAction(Constant* constant);
 
-Constant* StringConstantSemanticAction(const char* value);
+Constant* StringConstantSemanticAction(const char* value, Constant* constant);
+Constant* LonelyStringSemanticAction(const char* value);
 
 #endif

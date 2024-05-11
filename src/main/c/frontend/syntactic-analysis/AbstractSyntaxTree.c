@@ -1,4 +1,5 @@
 #include "AbstractSyntaxTree.h"
+
 #include <stdlib.h>
 
 /* MODULE INTERNAL STATE */
@@ -33,9 +34,7 @@ void freeExpression(Expression* expression) {
 				freeConstant(expression->constant);
 				freeExpression(expression->expression);
 				break;
-			case FACTOR:
-				freeFactor(expression->factor);
-				break;
+			case FACTOR: freeFactor(expression->factor); break;
 		}
 		free(expression);
 	}
@@ -69,9 +68,7 @@ void freeFactor(Factor* factor) {
 				freeConstant(factor->tokenConstant);
 				freeFactor(factor->tokenFactor);
 				break;
-			case CONSTANT:
-				freeConstant(factor->lonelyConstant);
-				break;
+			case CONSTANT: freeConstant(factor->lonelyConstant); break;
 		}
 		free(factor);
 	}
@@ -85,9 +82,7 @@ void freeTable(Table* table) {
 				freeTable(table->column);
 				freeConstant(table->constant);
 				break;
-			case LONELY_COLUMN:
-				freeConstant(table->lonelyConstant);
-				break;		
+			case LONELY_COLUMN: freeConstant(table->lonelyConstant); break;
 		}
 		free(table);
 	}
@@ -101,9 +96,7 @@ void freeList(List* list) {
 				freeList(list->item);
 				freeConstant(list->constant);
 				break;
-			case LONELY_ITEM:
-				freeConstant(list->lonelyConstant);
-				break;
+			case LONELY_ITEM: freeConstant(list->lonelyConstant); break;
 		}
 		free(list);
 	}
@@ -196,6 +189,10 @@ void freeUnderlineItalic(UnderlineItalic* underlineItalic) {
 void freeConstant(Constant* constant) {
 	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
 	if (constant != NULL) {
+		switch (constant->type) {
+			case STRING_CONSTANT: free(constant->constant); break;
+			case LONELY_STRING: break;
+		}
 		free(constant);
 	}
 }

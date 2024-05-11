@@ -49,7 +49,7 @@
 */
 
 /** Terminals. */
-%token <token> UNKNOWN
+/* %token <token> UNKNOWN */
 %token <string> STRING
 %token <token> TITLE_END
 %token <token> TITLE_START
@@ -180,7 +180,7 @@ italic:
 		BOLD_START 				italic_bold 				BOLD_END					{ $$ = BoldFromItalicSemanticAction($2); }
 	|	BOLD_START				constant					BOLD_START					{ $$ = LonelyItalicSemanticAction(BOLD_START, BOLD_END, $2); }
 	|	UNDERLINE_START			italic_underline			UNDERLINE_END				{ $$ = UnderlineFromItalicSemanticAction($2); }
-	|	UNDERLINE_START			constant					UNDERLINE_END				{ $$ = LonelyItalicSemanticAction(UNDERLINE_START, UNDERLINE_END, $2) }
+	|	UNDERLINE_START			constant					UNDERLINE_END				{ $$ = LonelyItalicSemanticAction(UNDERLINE_START, UNDERLINE_END, $2); }
 ;
 
 italic_bold:
@@ -206,7 +206,9 @@ underline_italic:
 		BOLD_START 				constant					BOLD_END					{ $$ = LonelyUnderlineItalicSemanticAction($2);}
 ;
 
-constant: STRING																		{ $$ = StringConstantSemanticAction($1); }
+constant:
+		STRING					constant												{ $$ = StringConstantSemanticAction($1, $2); }
+	|	STRING																			{ $$ = LonelyStringSemanticAction($1); }
 ;
 
 %%

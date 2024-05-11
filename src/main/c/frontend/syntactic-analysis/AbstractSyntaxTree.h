@@ -80,6 +80,11 @@ enum UnderlineType {
 	UNDERLINE_CONSTANT,
 };
 
+enum ConstantType {
+	STRING_CONSTANT,
+	LONELY_STRING,
+};
+
 typedef enum BoldType BoldType;
 typedef enum ItalicType ItalicType;
 typedef enum UnderlineType UnderlineType;
@@ -87,9 +92,17 @@ typedef enum ExpressionType ExpressionType;
 typedef enum FactorType FactorType;
 typedef enum ListType ListType;
 typedef enum TableType TableType;
+typedef enum ConstantType ConstantType;
 
 struct Constant {
-	const char *value;
+	union {
+		const char *lonelyValue;
+		struct {
+			const char *value;
+			Constant *constant;
+		};
+		ConstantType type;
+	};
 };
 
 struct BoldItalic {
@@ -187,19 +200,19 @@ struct Factor {
 		};
 		struct {
 			Bold *bold;
-			Factor* boldFactor;
+			Factor *boldFactor;
 		};
 		struct {
 			Italic *italic;
-			Factor* italicFactor;
+			Factor *italicFactor;
 		};
 		struct {
 			Underline *underline;
-			Factor* underlineFactor;
+			Factor *underlineFactor;
 		};
 		struct {
 			Table *table;
-			Factor* tableFactor;
+			Factor *tableFactor;
 		};
 		struct {
 			Token startToken;

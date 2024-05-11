@@ -47,7 +47,8 @@ Program* ExpressionProgramSemanticAction(CompilerState* compilerState, Expressio
 	return program;
 }
 
-Expression* TokenExpressionSemanticAction(Token startToken, Token endToken, Constant* contantant, Expression* expression) {
+Expression* TokenExpressionSemanticAction(Token startToken, Token endToken, Constant* contantant,
+                                          Expression* expression) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	Expression* tokenExpression = calloc(1, sizeof(Expression));
 	tokenExpression->startToken = startToken;
@@ -75,10 +76,9 @@ Factor* ListFactorSemanticAction(Token startToken, Token endToken, List* list, F
 	listFactor->listFactor = factor;
 	listFactor->type = LIST;
 	return listFactor;
-
 }
 
-Factor* TokenFactorSemanticAction(Token startToken, Token endToken, Constant* constant, Factor *factor) {
+Factor* TokenFactorSemanticAction(Token startToken, Token endToken, Constant* constant, Factor* factor) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	Factor* tokenFactor = calloc(1, sizeof(Factor));
 	tokenFactor->startToken = startToken;
@@ -87,7 +87,6 @@ Factor* TokenFactorSemanticAction(Token startToken, Token endToken, Constant* co
 	tokenFactor->tokenFactor = factor;
 	tokenFactor->type = TOKEN;
 	return tokenFactor;
-
 }
 
 Factor* BoldFactorSemanticAction(Bold* bold, Factor* factor) {
@@ -288,9 +287,17 @@ UnderlineItalic* LonelyUnderlineItalicSemanticAction(Constant* constant) {
 	return underlineItalic;
 }
 
-Constant* StringConstantSemanticAction(const char* value) {
+Constant* StringConstantSemanticAction(const char* value, Constant* nextConstant) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	Constant* constant = calloc(1, sizeof(Constant));
+	constant->constant = nextConstant;
 	constant->value = value;
+	return constant;
+}
+
+Constant* LonelyStringSemanticAction(const char* value) {
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+	Constant* constant = calloc(1, sizeof(Constant));
+	constant->lonelyValue = value;
 	return constant;
 }

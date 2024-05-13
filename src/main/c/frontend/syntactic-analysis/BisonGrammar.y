@@ -49,7 +49,7 @@
 */
 
 /** Terminals. */
-/* %token <token> UNKNOWN */
+%token <token> UNKNOWN
 %token <string> STRING
 %token <token> TITLE_END
 %token <token> TITLE_START

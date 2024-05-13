@@ -101,8 +101,8 @@ struct Constant {
 			const char *value;
 			Constant *constant;
 		};
-		ConstantType type;
 	};
+	ConstantType type;
 };
 
 struct BoldItalic {

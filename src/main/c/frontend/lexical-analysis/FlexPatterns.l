@@ -44,7 +44,7 @@
 "👮‍♂️"                                    { return DoubleLexemeAction(createLexicalAnalyzerContext()); }
 "🤓"                                    { return DoubleLexemeAction(createLexicalAnalyzerContext()); }
 
-"\\.\\*"    						    { return StringLexemeAction(createLexicalAnalyzerContext()); }
+[[:alnum:]]+        					{ return StringLexemeAction(createLexicalAnalyzerContext()); }
 
 [[:space:]]+						    { IgnoredLexemeAction(createLexicalAnalyzerContext()); }
 .									    { return UnknownLexemeAction(createLexicalAnalyzerContext()); }

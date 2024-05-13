@@ -292,12 +292,15 @@ Constant* StringConstantSemanticAction(const char* value, Constant* nextConstant
 	Constant* constant = calloc(1, sizeof(Constant));
 	constant->constant = nextConstant;
 	constant->value = value;
+	constant->type = STRING_CONSTANT;
 	return constant;
 }
 
 Constant* LonelyStringSemanticAction(const char* value) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	Constant* constant = calloc(1, sizeof(Constant));
+	logDebugging(_logger, "LONELY STRING %s", value);
 	constant->lonelyValue = value;
+	constant->type = LONELY_STRING;
 	return constant;
 }

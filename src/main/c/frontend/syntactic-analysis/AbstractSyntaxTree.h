@@ -82,7 +82,7 @@ enum UnderlineType {
 
 enum ConstantType {
 	STRING_CONSTANT,
-	LONELY_STRING,
+	EMPTY_CONSTANT,
 };
 
 typedef enum BoldType BoldType;
@@ -96,7 +96,6 @@ typedef enum ConstantType ConstantType;
 
 struct Constant {
 	union {
-		const char *lonelyValue;
 		struct {
 			const char *value;
 			Constant *constant;

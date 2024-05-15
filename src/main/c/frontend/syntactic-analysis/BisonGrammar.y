@@ -208,7 +208,7 @@ underline_italic:
 
 constant:
 		STRING					constant												{ $$ = StringConstantSemanticAction($1, $2); }
-	|	STRING																			{ $$ = LonelyStringSemanticAction($1); }
+    |                                                                                   { $$ = EmptyConstantSemanticAction();}
 ;
 
 %%

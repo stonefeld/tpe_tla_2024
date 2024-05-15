@@ -16,6 +16,7 @@
  */
 
 /* %x MULTILINE_COMMENT */
+%x CANA
 
 /**
  * Reusable patterns.
@@ -23,6 +24,10 @@
  * @see https://westes.github.io/flex/manual/Matching.html
  * @see https://westes.github.io/flex/manual/Patterns.html
  */
+
+TEXT [][a-zA-Z0-9*@&=+$/?%#_~|<>{}()'"\\!:;.,\-]+
+CANA 👮‍♂️
+NOCANA ^{CANA}+
 
 %%
 
@@ -37,18 +42,19 @@
 "🤸‍♂️"                                    { return DoubleLexemeAction(createLexicalAnalyzerContext()); }
 "📷"									{ return DoubleLexemeAction(createLexicalAnalyzerContext()); }
 "👨‍🦲"									   { return DoubleLexemeAction(createLexicalAnalyzerContext()); }
-"🤌"							        { return DoubleLexemeAction(createLexicalAnalyzerContext()); }
+"🤌"							         { return DoubleLexemeAction(createLexicalAnalyzerContext()); }
 "📉"                                    { return DoubleLexemeAction(createLexicalAnalyzerContext()); }
 "📊"                                    { return DoubleLexemeAction(createLexicalAnalyzerContext()); }
 "💻"                                    { return DoubleLexemeAction(createLexicalAnalyzerContext()); }
-"👮‍♂️"                                    { return DoubleLexemeAction(createLexicalAnalyzerContext()); }
+"👮‍♂️"                                    { BEGIN(CANA); return DoubleLexemeAction(createLexicalAnalyzerContext()); }
 "🤓"                                    { return DoubleLexemeAction(createLexicalAnalyzerContext()); }
 
-[[:alnum:]]+        					{ return StringLexemeAction(createLexicalAnalyzerContext()); }
 
 [[:space:]]+						    { IgnoredLexemeAction(createLexicalAnalyzerContext()); }
-.									    { return UnknownLexemeAction(createLexicalAnalyzerContext()); }
+.									    { return StringLexemeAction(createLexicalAnalyzerContext()); }
 
+<CANA>"👮‍♂️"                             { BEGIN(INITIAL); return DoubleLexemeAction(createLexicalAnalyzerContext()); }
+<CANA>{NOCANA}                             { return StringLexemeAction(createLexicalAnalyzerContext()); }
 %%
 
 #include "FlexExport.h"

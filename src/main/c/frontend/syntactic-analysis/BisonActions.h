@@ -61,6 +61,6 @@ UnderlineBold* LonelyUnderlineBoldSemanticAction(Constant* constant);
 UnderlineItalic* LonelyUnderlineItalicSemanticAction(Constant* constant);
 
 Constant* StringConstantSemanticAction(const char* value, Constant* constant);
-Constant* LonelyStringSemanticAction(const char* value);
+Constant* EmptyConstantSemanticAction();
 
 #endif

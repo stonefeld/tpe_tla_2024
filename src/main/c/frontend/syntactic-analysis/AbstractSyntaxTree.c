@@ -191,7 +191,7 @@ void freeConstant(Constant* constant) {
 	if (constant != NULL) {
 		switch (constant->type) {
 			case STRING_CONSTANT: free(constant->constant); break;
-			case LONELY_STRING: break;
+			case EMPTY_CONSTANT: break;
 		}
 		free(constant);
 	}

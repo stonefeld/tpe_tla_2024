@@ -296,11 +296,9 @@ Constant* StringConstantSemanticAction(const char* value, Constant* nextConstant
 	return constant;
 }
 
-Constant* LonelyStringSemanticAction(const char* value) {
+Constant* EmptyConstantSemanticAction(){
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	Constant* constant = calloc(1, sizeof(Constant));
-	logDebugging(_logger, "LONELY STRING %s", value);
-	constant->lonelyValue = value;
-	constant->type = LONELY_STRING;
+	constant->type = EMPTY_CONSTANT;
 	return constant;
 }

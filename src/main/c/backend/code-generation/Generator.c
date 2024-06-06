@@ -114,7 +114,7 @@ static void _generateFactor(const unsigned int indentationLevel, Factor* factor)
 			_generateConstant(1 + indentationLevel, factor->tokenConstant);
 			_output(1 + indentationLevel, "%s%s%s", "[ $", _tokenToCharacter(factor->endToken),
 			        "$, circle, draw, purple ]\n");
-			_generateFactor(1 + indentationLevel, factor->tableFactor);
+			_generateFactor(1 + indentationLevel, factor->tokenFactor);
 			break;
 		case CONSTANT: _generateConstant(1 + indentationLevel, factor->lonelyConstant); break;
 		default: logError(_logger, "The specified factor type is unknown: %d", factor->type); break;
@@ -239,7 +239,7 @@ static void _generateItalic(const unsigned int indentationLevel, Italic* italic)
 			_output(1 + indentationLevel, "%s%s%s", "[ $", _tokenToCharacter(italic->endToken),
 			        "$, circle, draw, purple ]\n");
 			break;
-		default: logError(_logger, "The specified bold type is unknown: %d", italic->type); break;
+		default: logError(_logger, "The specified italic type is unknown: %d", italic->type); break;
 	}
 	_output(indentationLevel, "%s", "]\n");
 }
@@ -289,7 +289,7 @@ static void _generateUnderline(const unsigned int indentationLevel, Underline* u
 			_output(1 + indentationLevel, "%s%s%s", "[ $", _tokenToCharacter(underline->endToken),
 			        "$, circle, draw, purple ]\n");
 			break;
-		default: logError(_logger, "The specified bold type is unknown: %d", underline->type); break;
+		default: logError(_logger, "The specified underline type is unknown: %d", underline->type); break;
 	}
 	_output(indentationLevel, "%s", "]\n");
 }
@@ -373,7 +373,7 @@ static const char* _tokenToCharacter(const Token token) {
 		case CELL_SEPARATOR_START: return "CELL_SEPARATOR_START";
 		case CELL_SEPARATOR_END: return "CELL_SEPARATOR_END";
 		default:
-			logError(_logger, "The specified expression type cannot be converted into character: %d", token);
+			logError(_logger, "The specified expression type cannot be converted into character: %s", token);
 			return "\0";
 	}
 }

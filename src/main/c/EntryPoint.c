@@ -19,7 +19,7 @@ const int main(const int count, const char** arguments) {
 	initializeSyntacticAnalyzerModule();
 	initializeAbstractSyntaxTreeModule();
 	// initializeCalculatorModule();
-	initializeGeneratorModule();
+	// initializeGeneratorModule();
 
 	// Logs the arguments of the application.
 	for (int k = 0; k < count; ++k) {
@@ -31,12 +31,12 @@ const int main(const int count, const char** arguments) {
 	const SyntacticAnalysisStatus syntacticAnalysisStatus = parse(&compilerState);
 	CompilationStatus compilationStatus = SUCCEED;
 	if (syntacticAnalysisStatus == ACCEPT) {
-		logDebugging(logger, "Computing expression value...");
+		logDebugging(logger, "Computing title value...");
 		Program* program = compilerState.abstractSyntaxtTree;
-		// ComputationResult computationResult = computeExpression(program->expression);
+		// ComputationResult computationResult = computeExpression(program->title);
 		// if (computationResult.succeed) {
 		// 	compilerState.value = computationResult.value;
-		generate(&compilerState);
+		// generate(&compilerState);
 		// } else {
 		// 	logError(logger, "The computation phase rejects the input program.");
 		// 	compilationStatus = FAILED;
@@ -49,7 +49,7 @@ const int main(const int count, const char** arguments) {
 	}
 
 	logDebugging(logger, "Releasing modules resources...");
-	shutdownGeneratorModule();
+	// shutdownGeneratorModule();
 	// shutdownCalculatorModule();
 	shutdownAbstractSyntaxTreeModule();
 	shutdownSyntacticAnalyzerModule();

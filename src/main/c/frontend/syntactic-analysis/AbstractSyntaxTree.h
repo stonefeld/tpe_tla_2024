@@ -4,6 +4,7 @@
 #include <stdlib.h>
 
 #include "../../shared/Logger.h"
+#include "BisonParser.h"
 
 /** Initialize module's internal state. */
 void initializeAbstractSyntaxTreeModule();
@@ -26,29 +27,41 @@ typedef struct BoldUnderline BoldUnderline;
 typedef struct BoldItalic BoldItalic;
 typedef struct Bold Bold;
 
-typedef struct Constant Constant;
 typedef struct Table Table;
 typedef struct List List;
-typedef struct Expression Expression;
-typedef struct Factor Factor;
+
+typedef struct Constant Constant;
+typedef struct Tag Tag;
+typedef struct Title Title;
 typedef struct Program Program;
 
 /**
  * Node types for the Abstract Syntax Tree (AST).
  */
 
-enum ExpressionType {
-	TOKEN_EXPRESSION,
-	FACTOR,
+enum TitleType {
+	TITLE,
+	EMPTY_TITLE,
 };
 
-enum FactorType {
-	LIST,
+enum TagType {
+	HEADING_1,
+	HEADING_2,
+	HEADING_3,
+	PAGE_SKIP,
+	IMAGE,
+	CODE,
+	ESCAPE,
+	EQUATION,
+	ORDERED_LIST,
+	UNORDERED_LIST,
+	BOLD_CONSTANT,
 	BOLD,
+	ITALIC_CONSTANT,
 	ITALIC,
+	UNDERLINE_CONSTANT,
 	UNDERLINE,
 	TABLE,
-	TOKEN,
 	CONSTANT,
 };
 
@@ -64,20 +77,23 @@ enum TableType {
 
 enum BoldType {
 	BOLD_ITALIC,
+	BOLD_ITALIC_CONSTANT,
 	BOLD_UNDERLINE,
-	BOLD_CONSTANT,
+	BOLD_UNDERLINE_CONSTANT,
 };
 
 enum ItalicType {
 	ITALIC_BOLD,
+	ITALIC_BOLD_CONSTANT,
 	ITALIC_UNDERLINE,
-	ITALIC_CONSTANT,
+	ITALIC_UNDERLINE_CONSTANT,
 };
 
 enum UnderlineType {
 	UNDERLINE_BOLD,
+	UNDERLINE_BOLD_CONSTANT,
 	UNDERLINE_ITALIC,
-	UNDERLINE_CONSTANT,
+	UNDERLINE_ITALIC_CONSTANT,
 };
 
 enum ConstantType {
@@ -85,22 +101,17 @@ enum ConstantType {
 	EMPTY_CONSTANT,
 };
 
+typedef enum TitleType TitleType;
+typedef enum TagType TagType;
+typedef enum ConstantType ConstantType;
+typedef enum ListType ListType;
+typedef enum TableType TableType;
 typedef enum BoldType BoldType;
 typedef enum ItalicType ItalicType;
 typedef enum UnderlineType UnderlineType;
-typedef enum ExpressionType ExpressionType;
-typedef enum FactorType FactorType;
-typedef enum ListType ListType;
-typedef enum TableType TableType;
-typedef enum ConstantType ConstantType;
 
 struct Constant {
-	union {
-		struct {
-			const char *value;
-			Constant *constant;
-		};
-	};
+	char *value;
 	ConstantType type;
 };
 
@@ -132,11 +143,7 @@ struct Bold {
 	union {
 		BoldItalic *boldItalic;
 		BoldUnderline *boldUnderline;
-		struct {
-			Token startToken;
-			Constant *constant;
-			Token endToken;
-		};
+		Constant *constant;
 	};
 	BoldType type;
 };
@@ -145,11 +152,7 @@ struct Italic {
 	union {
 		ItalicBold *italicBold;
 		ItalicUnderline *italicUnderline;
-		struct {
-			Token startToken;
-			Constant *constant;
-			Token endToken;
-		};
+		Constant *constant;
 	};
 	ItalicType type;
 };
@@ -158,11 +161,7 @@ struct Underline {
 	union {
 		UnderlineBold *underlineBold;
 		UnderlineItalic *underlineItalic;
-		struct {
-			Token startToken;
-			Constant *constant;
-			Token endToken;
-		};
+		Constant *constant;
 	};
 	UnderlineType type;
 };
@@ -189,64 +188,57 @@ struct Table {
 	TableType type;
 };
 
-struct Factor {
+struct Tag {
 	union {
 		struct {
-			Token startListToken;
 			List *list;
-			Token endListToken;
-			Factor *listFactor;
-		};
-		struct {
-			Bold *bold;
-			Factor *boldFactor;
-		};
-		struct {
-			Italic *italic;
-			Factor *italicFactor;
-		};
-		struct {
-			Underline *underline;
-			Factor *underlineFactor;
+			Tag *listTag;
 		};
 		struct {
 			Table *table;
-			Factor *tableFactor;
+			Tag *tableTag;
 		};
 		struct {
-			Token startToken;
-			Constant *tokenConstant;
-			Token endToken;
-			Factor *tokenFactor;
+			Bold *bold;
+			Tag *boldTag;
 		};
-		Constant *lonelyConstant;
+		struct {
+			Italic *italic;
+			Tag *italicTag;
+		};
+		struct {
+			Underline *underline;
+			Tag *underlineTag;
+		};
+		struct {
+			Constant *constant;
+			Tag *constantTag;
+		};
 	};
-	FactorType type;
+	TagType type;
 };
 
-struct Expression {
+struct Title {
 	union {
-		Factor *factor;
 		struct {
-			Token startToken;
 			Constant *constant;
-			Token endToken;
-			Expression *expression;
+			Tag *tag;
 		};
+		Tag *lonelyTag;
 	};
-	ExpressionType type;
+	TitleType type;
 };
 
 struct Program {
-	Expression *expression;
+	Title *title;
 };
 
 /**
  * Node recursive destructors.
  */
 void freeProgram(Program *program);
-void freeExpression(Expression *expression);
-void freeFactor(Factor *factor);
+void freeTitle(Title *title);
+void freeTag(Tag *tag);
 void freeList(List *list);
 void freeTable(Table *table);
 void freeBold(Bold *bold);

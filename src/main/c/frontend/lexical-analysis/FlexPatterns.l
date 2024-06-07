@@ -31,30 +31,31 @@ NOCANA ^{CANA}+
 
 %%
 
-"🤴"									{ return DoubleLexemeAction(createLexicalAnalyzerContext()); }
-"👴"									{ return DoubleLexemeAction(createLexicalAnalyzerContext()); }
-"👨"									{ return DoubleLexemeAction(createLexicalAnalyzerContext()); }
-"👶"									{ return DoubleLexemeAction(createLexicalAnalyzerContext()); }
-"🐇"									{ return DoubleLexemeAction(createLexicalAnalyzerContext()); }
-"💥"									{ return DoubleLexemeAction(createLexicalAnalyzerContext()); }
-"🔢"									{ return DoubleLexemeAction(createLexicalAnalyzerContext()); }
-"🎯"                                    { return DoubleLexemeAction(createLexicalAnalyzerContext()); }
-"🤸‍♂️"                                    { return DoubleLexemeAction(createLexicalAnalyzerContext()); }
-"📷"									{ return DoubleLexemeAction(createLexicalAnalyzerContext()); }
-"👨‍🦲"									   { return DoubleLexemeAction(createLexicalAnalyzerContext()); }
-"🤌"							         { return DoubleLexemeAction(createLexicalAnalyzerContext()); }
-"📉"                                    { return DoubleLexemeAction(createLexicalAnalyzerContext()); }
-"📊"                                    { return DoubleLexemeAction(createLexicalAnalyzerContext()); }
-"💻"                                    { return DoubleLexemeAction(createLexicalAnalyzerContext()); }
-"👮‍♂️"                                    { BEGIN(CANA); return DoubleLexemeAction(createLexicalAnalyzerContext()); }
-"🤓"                                    { return DoubleLexemeAction(createLexicalAnalyzerContext()); }
+"🤴"									{ return TitleLexemeAction(createLexicalAnalyzerContext()); }
+"👴"									{ return Heading1LexemeAction(createLexicalAnalyzerContext()); }
+"👨"									{ return Heading2LexemeAction(createLexicalAnalyzerContext()); }
+"👶"									{ return Heading3LexemeAction(createLexicalAnalyzerContext()); }
+"🐇"									{ return PageSkipLexemeAction(createLexicalAnalyzerContext()); }
+"💥"									{ return UnorderedListLexemeAction(createLexicalAnalyzerContext()); }
+"🔢"									{ return OrderedListLexemeAction(createLexicalAnalyzerContext()); }
+"🎯"                                    { return ListItemLexemeAction(createLexicalAnalyzerContext()); }
+"🤸‍♂️"                                    { return CellSeparatorLexemeAction(createLexicalAnalyzerContext()); }
+"📷"									{ return ImageLexemeAction(createLexicalAnalyzerContext()); }
+"👨‍🦲"									   { return BoldLexemeAction(createLexicalAnalyzerContext()); }
+"🤌"							         { return ItalicLexemeAction(createLexicalAnalyzerContext()); }
+"📉"                                    { return UnderlineLexemeAction(createLexicalAnalyzerContext()); }
+"📊"                                    { return TableLexemeAction(createLexicalAnalyzerContext()); }
+"💻"                                    { return CodeLexemeAction(createLexicalAnalyzerContext()); }
+"👮‍♂️"                                    { BEGIN(CANA); return EscapedLexemeAction(createLexicalAnalyzerContext()); }
+"🤓"                                    { return EquationLexemeAction(createLexicalAnalyzerContext()); }
 
 
 [[:space:]]+						    { IgnoredLexemeAction(createLexicalAnalyzerContext()); }
-.									    { return StringLexemeAction(createLexicalAnalyzerContext()); }
+{TEXT}									{ return StringLexemeAction(createLexicalAnalyzerContext()); }
+.                                       { return UnknownLexemeAction(createLexicalAnalyzerContext()); }
 
-<CANA>"👮‍♂️"                             { BEGIN(INITIAL); return DoubleLexemeAction(createLexicalAnalyzerContext()); }
-<CANA>{NOCANA}                             { return StringLexemeAction(createLexicalAnalyzerContext()); }
+<CANA>"👮‍♂️"                             { BEGIN(INITIAL); return EscapedLexemeAction(createLexicalAnalyzerContext()); }
+<CANA>{NOCANA}                         { return StringLexemeAction(createLexicalAnalyzerContext()); }
 %%
 
 #include "FlexExport.h"

@@ -33,10 +33,10 @@ static void _logSyntacticAnalyzerAction(const char* functionName) {
 
 /* PUBLIC FUNCTIONS */
 
-Program* ExpressionProgramSemanticAction(CompilerState* compilerState, Expression* expression) {
+Program* ProgramSemanticAction(CompilerState* compilerState, Title* title) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	Program* program = calloc(1, sizeof(Program));
-	program->expression = expression;
+	program->title = title;
 	compilerState->abstractSyntaxtTree = program;
 	if (0 < flexCurrentContext()) {
 		logError(_logger, "The final context is not the default (0): %d", flexCurrentContext());
@@ -47,93 +47,193 @@ Program* ExpressionProgramSemanticAction(CompilerState* compilerState, Expressio
 	return program;
 }
 
-Expression* TokenExpressionSemanticAction(Token startToken, Token endToken, Constant* contantant,
-                                          Expression* expression) {
+Title* LonelyTitleSemanticAction(Constant* constant) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
-	Expression* tokenExpression = calloc(1, sizeof(Expression));
-	tokenExpression->startToken = startToken;
-	tokenExpression->constant = contantant;
-	tokenExpression->endToken = endToken;
-	tokenExpression->expression = expression;
-	tokenExpression->type = TOKEN_EXPRESSION;
-	return tokenExpression;
+	Title* title = calloc(1, sizeof(Title));
+	title->lonelyConstant = constant;
+	title->type = LONELY_TITLE;
+	return title;
 }
 
-Expression* FactorExpressionSemanticAction(Factor* factor) {
+Title* TitleSemanticAction(Constant* constant, Tags* tags) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
-	Expression* factorExpression = calloc(1, sizeof(Expression));
-	factorExpression->factor = factor;
-	factorExpression->type = FACTOR;
-	return factorExpression;
+	Title* title = calloc(1, sizeof(Title));
+	title->constant = constant;
+	title->tags = tags;
+	title->type = TITLE;
+	return title;
 }
 
-Factor* ListFactorSemanticAction(Token startToken, Token endToken, List* list, Factor* factor) {
+Title* EmptyTitleSemanticAction(Tags* tags) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
-	Factor* listFactor = calloc(1, sizeof(Factor));
-	listFactor->startListToken = startToken;
-	listFactor->list = list;
-	listFactor->endListToken = endToken;
-	listFactor->listFactor = factor;
-	listFactor->type = LIST;
-	return listFactor;
+	Title* title = calloc(1, sizeof(Title));
+	title->lonelyTags = tags;
+	title->type = NO_TITLE;
+	return title;
 }
 
-Factor* TokenFactorSemanticAction(Token startToken, Token endToken, Constant* constant, Factor* factor) {
+Tags* TagsSemanticAction(Tag* tag, Tags* tags) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
-	Factor* tokenFactor = calloc(1, sizeof(Factor));
-	tokenFactor->startToken = startToken;
-	tokenFactor->tokenConstant = constant;
-	tokenFactor->endToken = endToken;
-	tokenFactor->tokenFactor = factor;
-	tokenFactor->type = TOKEN;
-	return tokenFactor;
+	Tags* tagsList = calloc(1, sizeof(Tags));
+	tagsList->tag = tag;
+	tagsList->tags = tags;
+	tagsList->type = TAGS;
+	return tagsList;
 }
 
-Factor* BoldFactorSemanticAction(Bold* bold, Factor* factor) {
+Tags* EndTagSemanticAction(Tag* tag) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
-	Factor* boldFactor = calloc(1, sizeof(Factor));
-	boldFactor->bold = bold;
-	boldFactor->boldFactor = factor;
-	boldFactor->type = BOLD;
-	return boldFactor;
+	Tags* tagsList = calloc(1, sizeof(Tags));
+	tagsList->tag = tag;
+	tagsList->type = END_TAG;
+	return tagsList;
 }
 
-Factor* ItalicFactorSemanticAction(Italic* italic, Factor* factor) {
+Tag* Heading1SemanticAction(Constant* constant) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
-	Factor* italicFactor = calloc(1, sizeof(Factor));
-	italicFactor->italic = italic;
-	italicFactor->italicFactor = factor;
-	italicFactor->type = ITALIC;
-	return italicFactor;
+	Tag* heading1 = calloc(1, sizeof(Tag));
+	heading1->constant = constant;
+	heading1->type = HEADING_1;
+	return heading1;
 }
 
-Factor* UnderlineFactorSemanticAction(Underline* underline, Factor* factor) {
+Tag* Heading2SemanticAction(Constant* constant) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
-	Factor* underlineFactor = calloc(1, sizeof(Factor));
-	underlineFactor->underline = underline;
-	underlineFactor->underlineFactor = factor;
-	underlineFactor->type = UNDERLINE;
-	return underlineFactor;
+	Tag* heading2 = calloc(1, sizeof(Tag));
+	heading2->constant = constant;
+	heading2->type = HEADING_2;
+	return heading2;
 }
 
-Factor* TableFactorSemanticAction(Table* table, Factor* factor) {
+Tag* Heading3SemanticAction(Constant* constant) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
-	Factor* tableFactor = calloc(1, sizeof(Factor));
-	tableFactor->table = table;
-	tableFactor->tableFactor = factor;
-	tableFactor->type = TABLE;
-	return tableFactor;
+	Tag* heading3 = calloc(1, sizeof(Tag));
+	heading3->constant = constant;
+	heading3->type = HEADING_3;
+	return heading3;
 }
 
-Factor* ConstantFactorSemanticAction(Constant* constant) {
+Tag* PageSkipSemanticAction(Constant* constant) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
-	Factor* constantFactor = calloc(1, sizeof(Factor));
-	constantFactor->lonelyConstant = constant;
-	constantFactor->type = CONSTANT;
-	return constantFactor;
+	Tag* pageSkip = calloc(1, sizeof(Tag));
+	pageSkip->constant = constant;
+	pageSkip->type = PAGE_SKIP;
+	return pageSkip;
 }
 
-List* ListSemanticAction(Constant* constant, List* item) {
+Tag* ImageSemanticAction(Constant* constant) {
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+	Tag* image = calloc(1, sizeof(Tag));
+	image->constant = constant;
+	image->type = IMAGE;
+	return image;
+}
+
+Tag* CodeSemanticAction(Constant* constant) {
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+	Tag* code = calloc(1, sizeof(Tag));
+	code->constant = constant;
+	code->type = CODE;
+	return code;
+}
+
+Tag* EscapeSemanticAction(Constant* constant) {
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+	Tag* escape = calloc(1, sizeof(Tag));
+	escape->constant = constant;
+	escape->type = ESCAPE;
+	return escape;
+}
+
+Tag* EquationSemanticAction(Constant* constant) {
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+	Tag* equation = calloc(1, sizeof(Tag));
+	equation->constant = constant;
+	equation->type = EQUATION;
+	return equation;
+}
+
+Tag* UnorderedListSemanticAction(List* list) {
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+	Tag* unorderedList = calloc(1, sizeof(Tag));
+	unorderedList->list = list;
+	unorderedList->type = UNORDERED_LIST;
+	return unorderedList;
+}
+
+Tag* OrderedListSemanticAction(List* list) {
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+	Tag* orderedList = calloc(1, sizeof(Tag));
+	orderedList->list = list;
+	orderedList->type = ORDERED_LIST;
+	return orderedList;
+}
+
+Tag* TableSemanticAction(Table* table) {
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+	Tag* tableTag = calloc(1, sizeof(Tag));
+	tableTag->table = table;
+	tableTag->type = TABLE;
+	return tableTag;
+}
+
+Tag* BoldSemanticAction(Bold* bold) {
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+	Tag* boldTag = calloc(1, sizeof(Tag));
+	boldTag->bold = bold;
+	boldTag->type = BOLD;
+	return boldTag;
+}
+
+Tag* BoldConstantSemanticAction(Constant* constant) {
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+	Tag* boldTag = calloc(1, sizeof(Tag));
+	boldTag->constant = constant;
+	boldTag->type = BOLD_CONSTANT;
+	return boldTag;
+}
+
+Tag* ItalicSemanticAction(Italic* italic) {
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+	Tag* italicTag = calloc(1, sizeof(Tag));
+	italicTag->italic = italic;
+	italicTag->type = ITALIC;
+	return italicTag;
+}
+
+Tag* ItalicConstantSemanticAction(Constant* constant) {
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+	Tag* italicTag = calloc(1, sizeof(Tag));
+	italicTag->constant = constant;
+	italicTag->type = ITALIC_CONSTANT;
+	return italicTag;
+}
+
+Tag* UnderlineSemanticAction(Underline* underline) {
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+	Tag* underlineTag = calloc(1, sizeof(Tag));
+	underlineTag->underline = underline;
+	underlineTag->type = UNDERLINE;
+	return underlineTag;
+}
+
+Tag* UnderlineConstantSemanticAction(Constant* constant) {
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+	Tag* underlineTag = calloc(1, sizeof(Tag));
+	underlineTag->constant = constant;
+	underlineTag->type = UNDERLINE_CONSTANT;
+	return underlineTag;
+}
+
+Tag* StringTagSemanticAction(char* value) {
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+	Tag* constantTag = calloc(1, sizeof(Tag));
+	constantTag->value = value;
+	constantTag->type = STRING_TAG;
+	return constantTag;
+}
+
+List* ItemSemanticAction(Constant* constant, List* item) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	List* list = calloc(1, sizeof(List));
 	list->constant = constant;
@@ -142,7 +242,7 @@ List* ListSemanticAction(Constant* constant, List* item) {
 	return list;
 }
 
-List* LonelyListSemanticAction(Constant* constant) {
+List* LonelyItemSemanticAction(Constant* constant) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	List* list = calloc(1, sizeof(List));
 	list->lonelyConstant = constant;
@@ -150,7 +250,7 @@ List* LonelyListSemanticAction(Constant* constant) {
 	return list;
 }
 
-Table* TableSemanticAction(Constant* constant, Table* column) {
+Table* CellSeparatorSemanticAction(Constant* constant, Table* column) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	Table* table = calloc(1, sizeof(Table));
 	table->constant = constant;
@@ -159,7 +259,7 @@ Table* TableSemanticAction(Constant* constant, Table* column) {
 	return table;
 }
 
-Table* LonelyTableSemanticAction(Constant* constant) {
+Table* LonelyCellSeparatorSemanticAction(Constant* constant) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	Table* table = calloc(1, sizeof(Table));
 	table->lonelyConstant = constant;
@@ -167,17 +267,15 @@ Table* LonelyTableSemanticAction(Constant* constant) {
 	return table;
 }
 
-Bold* LonelyBoldSemanticAction(Token startToken, Token endToken, Constant* constant) {
+Bold* BoldItalicConstantSemanticAction(Constant* constant) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	Bold* bold = calloc(1, sizeof(Bold));
-	bold->startToken = startToken;
 	bold->constant = constant;
-	bold->endToken = endToken;
-	bold->type = BOLD_CONSTANT;
+	bold->type = BOLD_ITALIC_CONSTANT;
 	return bold;
 }
 
-Bold* ItalicFromBoldSemanticAction(BoldItalic* boldItalic) {
+Bold* BoldItalicSemanticAction(BoldItalic* boldItalic) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	Bold* bold = calloc(1, sizeof(Bold));
 	bold->boldItalic = boldItalic;
@@ -185,7 +283,15 @@ Bold* ItalicFromBoldSemanticAction(BoldItalic* boldItalic) {
 	return bold;
 }
 
-Bold* UnderlineFromBoldSemanticAction(BoldUnderline* boldUnderline) {
+Bold* BoldUnderlineConstantSemanticAction(Constant* constant) {
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+	Bold* bold = calloc(1, sizeof(Bold));
+	bold->constant = constant;
+	bold->type = BOLD_UNDERLINE_CONSTANT;
+	return bold;
+}
+
+Bold* BoldUnderlineSemanticAction(BoldUnderline* boldUnderline) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	Bold* bold = calloc(1, sizeof(Bold));
 	bold->boldUnderline = boldUnderline;
@@ -193,31 +299,29 @@ Bold* UnderlineFromBoldSemanticAction(BoldUnderline* boldUnderline) {
 	return bold;
 }
 
-BoldItalic* LonelyBoldItalicSemanticAction(Constant* constant) {
+BoldItalic* BoldItalicUnderlineSemanticAction(Constant* constant) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	BoldItalic* boldItalic = calloc(1, sizeof(BoldItalic));
 	boldItalic->constant = constant;
 	return boldItalic;
 }
 
-BoldUnderline* LonelyBoldUnderlineSemanticAction(Constant* constant) {
+BoldUnderline* BoldUnderlineItalicSemanticAction(Constant* constant) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	BoldUnderline* boldUnderline = calloc(1, sizeof(BoldUnderline));
 	boldUnderline->constant = constant;
 	return boldUnderline;
 }
 
-Italic* LonelyItalicSemanticAction(Token startToken, Token endToken, Constant* constant) {
+Italic* ItalicBoldConstantSemanticAction(Constant* constant) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	Italic* italic = calloc(1, sizeof(Italic));
-	italic->startToken = startToken;
 	italic->constant = constant;
-	italic->endToken = endToken;
-	italic->type = ITALIC_CONSTANT;
+	italic->type = ITALIC_BOLD_CONSTANT;
 	return italic;
 }
 
-Italic* BoldFromItalicSemanticAction(ItalicBold* italicBold) {
+Italic* ItalicBoldSemanticAction(ItalicBold* italicBold) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	Italic* italic = calloc(1, sizeof(Italic));
 	italic->italicBold = italicBold;
@@ -225,7 +329,15 @@ Italic* BoldFromItalicSemanticAction(ItalicBold* italicBold) {
 	return italic;
 }
 
-Italic* UnderlineFromItalicSemanticAction(ItalicUnderline* italicUnderline) {
+Italic* ItalicUnderlineConstantSemanticAction(Constant* constant) {
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+	Italic* italic = calloc(1, sizeof(Italic));
+	italic->constant = constant;
+	italic->type = ITALIC_UNDERLINE_CONSTANT;
+	return italic;
+}
+
+Italic* ItalicUnderlineSemanticAction(ItalicUnderline* italicUnderline) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	Italic* italic = calloc(1, sizeof(Italic));
 	italic->italicUnderline = italicUnderline;
@@ -233,31 +345,29 @@ Italic* UnderlineFromItalicSemanticAction(ItalicUnderline* italicUnderline) {
 	return italic;
 }
 
-ItalicBold* LonelyItalicBoldSemanticAction(Constant* constant) {
+ItalicBold* ItalicBoldUnderlineSemanticAction(Constant* constant) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	ItalicBold* italicBold = calloc(1, sizeof(ItalicBold));
 	italicBold->constant = constant;
 	return italicBold;
 }
 
-ItalicUnderline* LonelyItalicUnderlineSemanticAction(Constant* constant) {
+ItalicUnderline* ItalicUnderlineBoldSemanticAction(Constant* constant) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	ItalicUnderline* italicUnderline = calloc(1, sizeof(ItalicUnderline));
 	italicUnderline->constant = constant;
 	return italicUnderline;
 }
 
-Underline* LonelyUnderlineSemanticAction(Token startToken, Token endToken, Constant* constant) {
+Underline* UnderlineBoldConstantSemanticAction(Constant* constant) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	Underline* underline = calloc(1, sizeof(Underline));
-	underline->startToken = startToken;
 	underline->constant = constant;
-	underline->endToken = endToken;
-	underline->type = UNDERLINE_CONSTANT;
+	underline->type = UNDERLINE_BOLD_CONSTANT;
 	return underline;
 }
 
-Underline* BoldFromUnderlineSemanticAction(UnderlineBold* underlineBold) {
+Underline* UnderlineBoldSemanticAction(UnderlineBold* underlineBold) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	Underline* underline = calloc(1, sizeof(Underline));
 	underline->underlineBold = underlineBold;
@@ -265,7 +375,15 @@ Underline* BoldFromUnderlineSemanticAction(UnderlineBold* underlineBold) {
 	return underline;
 }
 
-Underline* ItalicFromUnderlineSemanticAction(UnderlineItalic* underlineItalic) {
+Underline* UnderlineItalicConstantSemanticAction(Constant* constant) {
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+	Underline* underline = calloc(1, sizeof(Underline));
+	underline->constant = constant;
+	underline->type = UNDERLINE_ITALIC_CONSTANT;
+	return underline;
+}
+
+Underline* UnderlineItalicSemanticAction(UnderlineItalic* underlineItalic) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	Underline* underline = calloc(1, sizeof(Underline));
 	underline->underlineItalic = underlineItalic;
@@ -273,30 +391,30 @@ Underline* ItalicFromUnderlineSemanticAction(UnderlineItalic* underlineItalic) {
 	return underline;
 }
 
-UnderlineBold* LonelyUnderlineBoldSemanticAction(Constant* constant) {
+UnderlineBold* UnderlineBoldItalicSemanticAction(Constant* constant) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	UnderlineBold* underlineBold = calloc(1, sizeof(UnderlineBold));
 	underlineBold->constant = constant;
 	return underlineBold;
 }
 
-UnderlineItalic* LonelyUnderlineItalicSemanticAction(Constant* constant) {
+UnderlineItalic* UnderlineItalicBoldSemanticAction(Constant* constant) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	UnderlineItalic* underlineItalic = calloc(1, sizeof(UnderlineItalic));
 	underlineItalic->constant = constant;
 	return underlineItalic;
 }
 
-Constant* StringConstantSemanticAction(const char* value, Constant* nextConstant) {
+Constant* StringConstantSemanticAction(char* value, Constant* constant) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
-	Constant* constant = calloc(1, sizeof(Constant));
-	constant->constant = nextConstant;
-	constant->value = value;
-	constant->type = STRING_CONSTANT;
-	return constant;
+	Constant* newConstant = calloc(1, sizeof(Constant));
+	newConstant->value = value;
+	newConstant->constant = constant;
+	newConstant->type = STRING_CONSTANT;
+	return newConstant;
 }
 
-Constant* EmptyConstantSemanticAction(){
+Constant* EmptyConstantSemanticAction() {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	Constant* constant = calloc(1, sizeof(Constant));
 	constant->type = EMPTY_CONSTANT;

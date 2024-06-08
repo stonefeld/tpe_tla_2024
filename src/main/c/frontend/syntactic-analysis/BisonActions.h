@@ -19,48 +19,70 @@ void shutdownBisonActionsModule();
  * Bison semantic actions.
  */
 
-Program* ExpressionProgramSemanticAction(CompilerState* compilerState, Expression* expression);
+Program* ProgramSemanticAction(CompilerState* compilerState, Title* title);
 
-Expression* TokenExpressionSemanticAction(Token startToken, Token endToken, Constant* contantant,
-                                          Expression* expression);
-Expression* FactorExpressionSemanticAction(Factor* factor);
+Title* LonelyTitleSemanticAction(Constant* constant);
+Title* TitleSemanticAction(Constant* constant, Tags* tags);
+Title* EmptyTitleSemanticAction(Tags* tags);
 
-Factor* ListFactorSemanticAction(Token startToken, Token endToken, List* list, Factor* factor);
-Factor* TokenFactorSemanticAction(Token startToken, Token endToken, Constant* constant, Factor* factor);
-Factor* BoldFactorSemanticAction(Bold* bold, Factor* factor);
-Factor* ItalicFactorSemanticAction(Italic* italic, Factor* factor);
-Factor* UnderlineFactorSemanticAction(Underline* underline, Factor* factor);
-Factor* TableFactorSemanticAction(Table* table, Factor* factor);
-Factor* ConstantFactorSemanticAction(Constant* constant);
+Tags* TagsSemanticAction(Tag* tag, Tags* tags);
+Tags* EndTagSemanticAction(Tag* tag);
 
-List* ListSemanticAction(Constant* constant, List* list);
-List* LonelyListSemanticAction(Constant* constant);
+Tag* Heading1SemanticAction(Constant* constant);
+Tag* Heading2SemanticAction(Constant* constant);
+Tag* Heading3SemanticAction(Constant* constant);
+Tag* PageSkipSemanticAction(Constant* constant);
+Tag* ImageSemanticAction(Constant* constant);
+Tag* CodeSemanticAction(Constant* constant);
+Tag* EscapeSemanticAction(Constant* constant);
+Tag* EquationSemanticAction(Constant* constant);
 
-Table* TableSemanticAction(Constant* constant, Table* table);
-Table* LonelyTableSemanticAction(Constant* constant);
+Tag* UnorderedListSemanticAction(List* list);
+Tag* OrderedListSemanticAction(List* list);
+Tag* TableSemanticAction(Table* table);
 
-Bold* LonelyBoldSemanticAction(Token startToken, Token endToken, Constant* constant);
-Bold* ItalicFromBoldSemanticAction(BoldItalic* boldItalic);
-Bold* UnderlineFromBoldSemanticAction(BoldUnderline* boldUnderline);
+Tag* BoldSemanticAction(Bold* bold);
+Tag* BoldConstantSemanticAction(Constant* constant);
 
-BoldItalic* LonelyBoldItalicSemanticAction(Constant* constant);
-BoldUnderline* LonelyBoldUnderlineSemanticAction(Constant* constant);
+Tag* ItalicSemanticAction(Italic* italic);
+Tag* ItalicConstantSemanticAction(Constant* constant);
 
-Italic* LonelyItalicSemanticAction(Token startToken, Token endToken, Constant* constant);
-Italic* BoldFromItalicSemanticAction(ItalicBold* italicBold);
-Italic* UnderlineFromItalicSemanticAction(ItalicUnderline* italicUnderline);
+Tag* UnderlineSemanticAction(Underline* underline);
+Tag* UnderlineConstantSemanticAction(Constant* constant);
 
-ItalicBold* LonelyItalicBoldSemanticAction(Constant* constant);
-ItalicUnderline* LonelyItalicUnderlineSemanticAction(Constant* constant);
+Tag* StringTagSemanticAction(char* value);
 
-Underline* LonelyUnderlineSemanticAction(Token startToken, Token endToken, Constant* constant);
-Underline* BoldFromUnderlineSemanticAction(UnderlineBold* underlineBold);
-Underline* ItalicFromUnderlineSemanticAction(UnderlineItalic* underlineItalic);
+List* ItemSemanticAction(Constant* constant, List* list);
+List* LonelyItemSemanticAction(Constant* constant);
 
-UnderlineBold* LonelyUnderlineBoldSemanticAction(Constant* constant);
-UnderlineItalic* LonelyUnderlineItalicSemanticAction(Constant* constant);
+Table* CellSeparatorSemanticAction(Constant* constant, Table* table);
+Table* LonelyCellSeparatorSemanticAction(Constant* constant);
 
-Constant* StringConstantSemanticAction(const char* value, Constant* constant);
+Bold* BoldItalicConstantSemanticAction(Constant* constant);
+Bold* BoldItalicSemanticAction(BoldItalic* boldItalic);
+Bold* BoldUnderlineConstantSemanticAction(Constant* constant);
+Bold* BoldUnderlineSemanticAction(BoldUnderline* boldUnderline);
+
+BoldItalic* BoldItalicUnderlineSemanticAction(Constant* constant);
+BoldUnderline* BoldUnderlineItalicSemanticAction(Constant* constant);
+
+Italic* ItalicBoldConstantSemanticAction(Constant* constant);
+Italic* ItalicBoldSemanticAction(ItalicBold* italicBold);
+Italic* ItalicUnderlineConstantSemanticAction(Constant* constant);
+Italic* ItalicUnderlineSemanticAction(ItalicUnderline* italicBold);
+
+ItalicBold* ItalicBoldUnderlineSemanticAction(Constant* constant);
+ItalicUnderline* ItalicUnderlineBoldSemanticAction(Constant* constant);
+
+Underline* UnderlineBoldConstantSemanticAction(Constant* constant);
+Underline* UnderlineBoldSemanticAction(UnderlineBold* underlineBold);
+Underline* UnderlineItalicConstantSemanticAction(Constant* constant);
+Underline* UnderlineItalicSemanticAction(UnderlineItalic* underlineItalic);
+
+UnderlineBold* UnderlineBoldItalicSemanticAction(Constant* constant);
+UnderlineItalic* UnderlineItalicBoldSemanticAction(Constant* constant);
+
+Constant* StringConstantSemanticAction(char* value, Constant* constant);
 Constant* EmptyConstantSemanticAction();
 
 #endif

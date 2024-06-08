@@ -31,11 +31,11 @@ void freeTitle(Title* title) {
 	if (title != NULL) {
 		switch (title->type) {
 			case TITLE:
-				freeConstant(title->constant);
+				freeText(title->text);
 				freeTags(title->tags);
 				break;
 			case NO_TITLE: freeTags(title->lonelyTags); break;
-			case LONELY_TITLE: freeConstant(title->lonelyConstant); break;
+			case LONELY_TITLE: freeText(title->lonelyText); break;
 		}
 		free(title);
 	}
@@ -67,9 +67,9 @@ void freeTag(Tag* tag) {
 			case CODE:
 			case ESCAPE:
 			case EQUATION:
-			case BOLD_CONSTANT:
-			case ITALIC_CONSTANT:
-			case UNDERLINE_CONSTANT: freeConstant(tag->constant); break;
+			case BOLD_TEXT:
+			case ITALIC_TEXT:
+			case UNDERLINE_TEXT: freeText(tag->text); break;
 			case STRING_TAG: free(tag->value); break;
 			case ORDERED_LIST:
 			case UNORDERED_LIST: freeList(tag->list); break;
@@ -88,9 +88,9 @@ void freeTable(Table* table) {
 		switch (table->type) {
 			case MULTIPLE_COLUMNS:
 				freeTable(table->column);
-				freeConstant(table->constant);
+				freeText(table->text);
 				break;
-			case LONELY_COLUMN: freeConstant(table->lonelyConstant); break;
+			case LONELY_COLUMN: freeText(table->lonelyText); break;
 		}
 		free(table);
 	}
@@ -102,9 +102,9 @@ void freeList(List* list) {
 		switch (list->type) {
 			case MULTIPLE_ITEMS:
 				freeList(list->item);
-				freeConstant(list->constant);
+				freeText(list->text);
 				break;
-			case LONELY_ITEM: freeConstant(list->lonelyConstant); break;
+			case LONELY_ITEM: freeText(list->lonelyText); break;
 		}
 		free(list);
 	}
@@ -116,8 +116,8 @@ void freeBold(Bold* bold) {
 		switch (bold->type) {
 			case BOLD_ITALIC: freeBoldItalic(bold->boldItalic); break;
 			case BOLD_UNDERLINE: freeBoldUnderline(bold->boldUnderline); break;
-			case BOLD_ITALIC_CONSTANT:
-			case BOLD_UNDERLINE_CONSTANT: freeConstant(bold->constant); break;
+			case BOLD_ITALIC_TEXT:
+			case BOLD_UNDERLINE_TEXT: freeText(bold->text); break;
 		}
 		free(bold);
 	}
@@ -129,8 +129,8 @@ void freeItalic(Italic* italic) {
 		switch (italic->type) {
 			case ITALIC_BOLD: freeItalicBold(italic->italicBold); break;
 			case ITALIC_UNDERLINE: freeItalicUnderline(italic->italicUnderline); break;
-			case ITALIC_BOLD_CONSTANT:
-			case ITALIC_UNDERLINE_CONSTANT: freeConstant(italic->constant); break;
+			case ITALIC_BOLD_TEXT:
+			case ITALIC_UNDERLINE_TEXT: freeText(italic->text); break;
 		}
 		free(italic);
 	}
@@ -142,8 +142,8 @@ void freeUnderline(Underline* underline) {
 		switch (underline->type) {
 			case UNDERLINE_BOLD: freeUnderlineBold(underline->underlineBold); break;
 			case UNDERLINE_ITALIC: freeUnderlineItalic(underline->underlineItalic); break;
-			case UNDERLINE_BOLD_CONSTANT:
-			case UNDERLINE_ITALIC_CONSTANT: freeConstant(underline->constant); break;
+			case UNDERLINE_BOLD_TEXT:
+			case UNDERLINE_ITALIC_TEXT: freeText(underline->text); break;
 		}
 		free(underline);
 	}
@@ -152,7 +152,7 @@ void freeUnderline(Underline* underline) {
 void freeBoldItalic(BoldItalic* boldItalic) {
 	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
 	if (boldItalic != NULL) {
-		freeConstant(boldItalic->constant);
+		freeText(boldItalic->text);
 		free(boldItalic);
 	}
 }
@@ -160,7 +160,7 @@ void freeBoldItalic(BoldItalic* boldItalic) {
 void freeBoldUnderline(BoldUnderline* boldUnderline) {
 	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
 	if (boldUnderline != NULL) {
-		freeConstant(boldUnderline->constant);
+		freeText(boldUnderline->text);
 		free(boldUnderline);
 	}
 }
@@ -168,7 +168,7 @@ void freeBoldUnderline(BoldUnderline* boldUnderline) {
 void freeItalicBold(ItalicBold* italicBold) {
 	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
 	if (italicBold != NULL) {
-		freeConstant(italicBold->constant);
+		freeText(italicBold->text);
 		free(italicBold);
 	}
 }
@@ -176,7 +176,7 @@ void freeItalicBold(ItalicBold* italicBold) {
 void freeItalicUnderline(ItalicUnderline* italicUnderline) {
 	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
 	if (italicUnderline != NULL) {
-		freeConstant(italicUnderline->constant);
+		freeText(italicUnderline->text);
 		free(italicUnderline);
 	}
 }
@@ -184,7 +184,7 @@ void freeItalicUnderline(ItalicUnderline* italicUnderline) {
 void freeUnderlineBold(UnderlineBold* underlineBold) {
 	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
 	if (underlineBold != NULL) {
-		freeConstant(underlineBold->constant);
+		freeText(underlineBold->text);
 		free(underlineBold);
 	}
 }
@@ -192,18 +192,18 @@ void freeUnderlineBold(UnderlineBold* underlineBold) {
 void freeUnderlineItalic(UnderlineItalic* underlineItalic) {
 	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
 	if (underlineItalic != NULL) {
-		freeConstant(underlineItalic->constant);
+		freeText(underlineItalic->text);
 		free(underlineItalic);
 	}
 }
 
-void freeConstant(Constant* constant) {
+void freeText(Text* text) {
 	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
-	if (constant != NULL) {
-		switch (constant->type) {
-			case STRING_CONSTANT: free(constant->value); break;
-			case EMPTY_CONSTANT: break;
+	if (text != NULL) {
+		switch (text->type) {
+			case STRING_TEXT: free(text->value); break;
+			case EMPTY_TEXT: break;
 		}
-		free(constant);
+		free(text);
 	}
 }

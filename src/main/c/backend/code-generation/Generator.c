@@ -35,7 +35,7 @@ static void _generateItalicUnderline(const unsigned int indentationLevel, Italic
 static void _generateUnderline(const unsigned int indentationLevel, Underline* underline);
 static void _generateUnderlineBold(const unsigned int indentationLevel, UnderlineBold* underlineBold);
 static void _generateUnderlineItalic(const unsigned int indentationLevel, UnderlineItalic* underlineItalic);
-static void _generateConstant(const unsigned int indentationLevel, Constant* constant);
+static void _generateText(const unsigned int indentationLevel, Text* text);
 static const char* _tokenToCharacter(const Token token);
 
 static void _generateEpilogue(const int value);
@@ -59,7 +59,7 @@ static void _generateExpression(const unsigned int indentationLevel, Expression*
 		case TOKEN_EXPRESSION:
 			_output(1 + indentationLevel, "%s%s%s", "[ $", _tokenToCharacter(expression->startToken),
 			        "$, circle, draw, purple ]\n");
-			_generateConstant(1 + indentationLevel, expression->constant);
+			_generateText(1 + indentationLevel, expression->text);
 			_output(1 + indentationLevel, "%s%s%s", "[ $", _tokenToCharacter(expression->endToken),
 			        "$, circle, draw, purple ]\n");
 			_generateExpression(1 + indentationLevel, expression->expression);
@@ -111,12 +111,12 @@ static void _generateFactor(const unsigned int indentationLevel, Factor* factor)
 		case TOKEN:
 			_output(1 + indentationLevel, "%s%s%s", "[ $", _tokenToCharacter(factor->startToken),
 			        "$, circle, draw, purple ]\n");
-			_generateConstant(1 + indentationLevel, factor->tokenConstant);
+			_generateText(1 + indentationLevel, factor->tokenText);
 			_output(1 + indentationLevel, "%s%s%s", "[ $", _tokenToCharacter(factor->endToken),
 			        "$, circle, draw, purple ]\n");
 			_generateFactor(1 + indentationLevel, factor->tokenFactor);
 			break;
-		case CONSTANT: _generateConstant(1 + indentationLevel, factor->lonelyConstant); break;
+		case TEXT: _generateText(1 + indentationLevel, factor->lonelyText); break;
 		default: logError(_logger, "The specified factor type is unknown: %d", factor->type); break;
 	}
 	_output(indentationLevel, "%s", "]\n");
@@ -130,12 +130,12 @@ static void _generateList(const unsigned int indentationLevel, List* list) {
 	switch (list->type) {
 		case LONELY_ITEM:
 			_output(1 + indentationLevel, "%s%s%s", "[ $", "LIST_ITEM_START", "$, circle, draw, purple ]\n");
-			_generateConstant(1 + indentationLevel, list->lonelyConstant);
+			_generateText(1 + indentationLevel, list->lonelyText);
 			_output(1 + indentationLevel, "%s%s%s", "[ $", "LIST_ITEM_END", "$, circle, draw, purple ]\n");
 			break;
 		case MULTIPLE_ITEMS:
 			_output(1 + indentationLevel, "%s%s%s", "[ $", "LIST_ITEM_START", "$, circle, draw, purple ]\n");
-			_generateConstant(1 + indentationLevel, list->constant);
+			_generateText(1 + indentationLevel, list->text);
 			_output(1 + indentationLevel, "%s%s%s", "[ $", "LIST_ITEM_END", "$, circle, draw, purple ]\n");
 			_generateList(1 + indentationLevel, list->item);
 			break;
@@ -152,12 +152,12 @@ static void _generateTable(const unsigned int indentationLevel, Table* table) {
 	switch (table->type) {
 		case LONELY_COLUMN:
 			_output(1 + indentationLevel, "%s%s%s", "[ $", "CELL_SEPARATOR_START", "$, circle, draw, purple ]\n");
-			_generateConstant(1 + indentationLevel, table->lonelyConstant);
+			_generateText(1 + indentationLevel, table->lonelyText);
 			_output(1 + indentationLevel, "%s%s%s", "[ $", "CELL_SEPARATOR_END", "$, circle, draw, purple ]\n");
 			break;
 		case MULTIPLE_COLUMNS:
 			_output(1 + indentationLevel, "%s%s%s", "[ $", "CELL_SEPARATOR_START", "$, circle, draw, purple ]\n");
-			_generateConstant(1 + indentationLevel, table->constant);
+			_generateText(1 + indentationLevel, table->text);
 			_output(1 + indentationLevel, "%s%s%s", "[ $", "CELL_SEPARATOR_END", "$, circle, draw, purple ]\n");
 			_generateTable(1 + indentationLevel, table->column);
 			break;
@@ -182,10 +182,10 @@ static void _generateBold(const unsigned int indentationLevel, Bold* bold) {
 			_generateBoldUnderline(1 + indentationLevel, bold->boldUnderline);
 			_output(1 + indentationLevel, "%s%s%s", "[ $", "UNDERLINE_END", "$, circle, draw, purple ]\n");
 			break;
-		case BOLD_CONSTANT:
+		case BOLD_TEXT:
 			_output(1 + indentationLevel, "%s%s%s", "[ $", _tokenToCharacter(bold->startToken),
 			        "$, circle, draw, purple ]\n");
-			_generateConstant(1 + indentationLevel, bold->constant);
+			_generateText(1 + indentationLevel, bold->text);
 			_output(1 + indentationLevel, "%s%s%s", "[ $", _tokenToCharacter(bold->endToken),
 			        "$, circle, draw, purple ]\n");
 			break;
@@ -200,7 +200,7 @@ static void _generateBold(const unsigned int indentationLevel, Bold* bold) {
 static void _generateBoldItalic(const unsigned int indentationLevel, BoldItalic* boldItalic) {
 	_output(indentationLevel, "%s", "[ $BI$, circle, draw, black!20\n");
 	_output(1 + indentationLevel, "%s%s%s", "[ $", "UNDERLINE_START", "$, circle, draw, purple ]\n");
-	_generateConstant(1 + indentationLevel, boldItalic->constant);
+	_generateText(1 + indentationLevel, boldItalic->text);
 	_output(1 + indentationLevel, "%s%s%s", "[ $", "UNDERLINE_END", "$, circle, draw, purple ]\n");
 	_output(indentationLevel, "%s", "]\n");
 }
@@ -211,7 +211,7 @@ static void _generateBoldItalic(const unsigned int indentationLevel, BoldItalic*
 static void _generateBoldUnderline(const unsigned int indentationLevel, BoldUnderline* boldUnderline) {
 	_output(indentationLevel, "%s", "[ $BU$, circle, draw, black!20\n");
 	_output(1 + indentationLevel, "%s%s%s", "[ $", "ITALIC_START", "$, circle, draw, purple ]\n");
-	_generateConstant(1 + indentationLevel, boldUnderline->constant);
+	_generateText(1 + indentationLevel, boldUnderline->text);
 	_output(1 + indentationLevel, "%s%s%s", "[ $", "ITALIC_START", "$, circle, draw, purple ]\n");
 	_output(indentationLevel, "%s", "]\n");
 }
@@ -232,10 +232,10 @@ static void _generateItalic(const unsigned int indentationLevel, Italic* italic)
 			_generateItalicUnderline(1 + indentationLevel, italic->italicUnderline);
 			_output(1 + indentationLevel, "%s%s%s", "[ $", "UNDERLINE_END", "$, circle, draw, purple ]\n");
 			break;
-		case ITALIC_CONSTANT:
+		case ITALIC_TEXT:
 			_output(1 + indentationLevel, "%s%s%s", "[ $", _tokenToCharacter(italic->startToken),
 			        "$, circle, draw, purple ]\n");
-			_generateConstant(1 + indentationLevel, italic->constant);
+			_generateText(1 + indentationLevel, italic->text);
 			_output(1 + indentationLevel, "%s%s%s", "[ $", _tokenToCharacter(italic->endToken),
 			        "$, circle, draw, purple ]\n");
 			break;
@@ -250,7 +250,7 @@ static void _generateItalic(const unsigned int indentationLevel, Italic* italic)
 static void _generateItalicBold(const unsigned int indentationLevel, ItalicBold* italicBold) {
 	_output(indentationLevel, "%s", "[ $IB$, circle, draw, black!20\n");
 	_output(1 + indentationLevel, "%s%s%s", "[ $", "UNDERLINE_START", "$, circle, draw, purple ]\n");
-	_generateConstant(1 + indentationLevel, italicBold->constant);
+	_generateText(1 + indentationLevel, italicBold->text);
 	_output(1 + indentationLevel, "%s%s%s", "[ $", "UNDERLINE_END", "$, circle, draw, purple ]\n");
 	_output(indentationLevel, "%s", "]\n");
 }
@@ -261,7 +261,7 @@ static void _generateItalicBold(const unsigned int indentationLevel, ItalicBold*
 static void _generateItalicUnderline(const unsigned int indentationLevel, ItalicUnderline* italicUnderline) {
 	_output(indentationLevel, "%s", "[ $IU$, circle, draw, black!20\n");
 	_output(1 + indentationLevel, "%s%s%s", "[ $", "BOLD_START", "$, circle, draw, purple ]\n");
-	_generateConstant(1 + indentationLevel, italicUnderline->constant);
+	_generateText(1 + indentationLevel, italicUnderline->text);
 	_output(1 + indentationLevel, "%s%s%s", "[ $", "BOLD_END", "$, circle, draw, purple ]\n");
 	_output(indentationLevel, "%s", "]\n");
 }
@@ -282,10 +282,10 @@ static void _generateUnderline(const unsigned int indentationLevel, Underline* u
 			_generateUnderlineItalic(1 + indentationLevel, underline->underlineItalic);
 			_output(1 + indentationLevel, "%s%s%s", "[ $", "ITALIC_END", "$, circle, draw, purple ]\n");
 			break;
-		case UNDERLINE_CONSTANT:
+		case UNDERLINE_TEXT:
 			_output(1 + indentationLevel, "%s%s%s", "[ $", _tokenToCharacter(underline->startToken),
 			        "$, circle, draw, purple ]\n");
-			_generateConstant(1 + indentationLevel, underline->constant);
+			_generateText(1 + indentationLevel, underline->text);
 			_output(1 + indentationLevel, "%s%s%s", "[ $", _tokenToCharacter(underline->endToken),
 			        "$, circle, draw, purple ]\n");
 			break;
@@ -300,7 +300,7 @@ static void _generateUnderline(const unsigned int indentationLevel, Underline* u
 static void _generateUnderlineBold(const unsigned int indentationLevel, UnderlineBold* underlineBold) {
 	_output(indentationLevel, "%s", "[ $UB$, circle, draw, black!20\n");
 	_output(1 + indentationLevel, "%s%s%s", "[ $", "ITALIC_START", "$, circle, draw, purple ]\n");
-	_generateConstant(1 + indentationLevel, underlineBold->constant);
+	_generateText(1 + indentationLevel, underlineBold->text);
 	_output(1 + indentationLevel, "%s%s%s", "[ $", "ITALIC_END", "$, circle, draw, purple ]\n");
 	_output(indentationLevel, "%s", "]\n");
 }
@@ -311,23 +311,23 @@ static void _generateUnderlineBold(const unsigned int indentationLevel, Underlin
 static void _generateUnderlineItalic(const unsigned int indentationLevel, UnderlineItalic* underlineItalic) {
 	_output(indentationLevel, "%s", "[ $UI$, circle, draw, black!20\n");
 	_output(1 + indentationLevel, "%s%s%s", "[ $", "BOLD_START", "$, circle, draw, purple ]\n");
-	_generateConstant(1 + indentationLevel, underlineItalic->constant);
+	_generateText(1 + indentationLevel, underlineItalic->text);
 	_output(1 + indentationLevel, "%s%s%s", "[ $", "BOLD_END", "$, circle, draw, purple ]\n");
 	_output(indentationLevel, "%s", "]\n");
 }
 
 /**
- * Generates the output of a constant.
+ * Generates the output of a text.
  */
-static void _generateConstant(const unsigned int indentationLevel, Constant* constant) {
+static void _generateText(const unsigned int indentationLevel, Text* text) {
 	_output(indentationLevel, "%s", "[ $C$, circle, draw, black!20\n");
-	switch (constant->type) {
-		case STRING_CONSTANT:
-			_output(1 + indentationLevel, "%s%s%s", "[ $", constant->value, "$, circle, draw ]\n");
-			_generateConstant(1 + indentationLevel, constant->constant);
+	switch (text->type) {
+		case STRING_TEXT:
+			_output(1 + indentationLevel, "%s%s%s", "[ $", text->value, "$, circle, draw ]\n");
+			_generateText(1 + indentationLevel, text->text);
 			break;
-		case EMPTY_CONSTANT: _output(1 + indentationLevel, "%s", "[ $\\epsilon$, circle, draw ]\n"); break;
-		default: logError(_logger, "The specified factor type is unknown: %d", constant->type); break;
+		case EMPTY_TEXT: _output(1 + indentationLevel, "%s", "[ $\\epsilon$, circle, draw ]\n"); break;
+		default: logError(_logger, "The specified factor type is unknown: %d", text->type); break;
 	}
 	_output(indentationLevel, "%s", "]\n");
 }

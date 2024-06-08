@@ -42,7 +42,7 @@ NOCANA ^{CANA}+
 "🤸‍♂️"                                    { return CellSeparatorLexemeAction(createLexicalAnalyzerContext()); }
 "📷"									{ return ImageLexemeAction(createLexicalAnalyzerContext()); }
 "👨‍🦲"									   { return BoldLexemeAction(createLexicalAnalyzerContext()); }
-"🤌"							         { return ItalicLexemeAction(createLexicalAnalyzerContext()); }
+"🤌"							        { return ItalicLexemeAction(createLexicalAnalyzerContext()); }
 "📉"                                    { return UnderlineLexemeAction(createLexicalAnalyzerContext()); }
 "📊"                                    { return TableLexemeAction(createLexicalAnalyzerContext()); }
 "💻"                                    { return CodeLexemeAction(createLexicalAnalyzerContext()); }

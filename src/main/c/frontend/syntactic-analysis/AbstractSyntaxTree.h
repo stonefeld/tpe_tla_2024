@@ -29,7 +29,7 @@ typedef struct Bold Bold;
 typedef struct Table Table;
 typedef struct List List;
 
-typedef struct Constant Constant;
+typedef struct Text Text;
 typedef struct Tag Tag;
 typedef struct Tags Tags;
 typedef struct Title Title;
@@ -61,11 +61,11 @@ enum TagType {
 	EQUATION,
 	ORDERED_LIST,
 	UNORDERED_LIST,
-	BOLD_CONSTANT,
+	BOLD_TEXT,
 	BOLD,
-	ITALIC_CONSTANT,
+	ITALIC_TEXT,
 	ITALIC,
-	UNDERLINE_CONSTANT,
+	UNDERLINE_TEXT,
 	UNDERLINE,
 	TABLE,
 	STRING_TAG,
@@ -83,78 +83,78 @@ enum TableType {
 
 enum BoldType {
 	BOLD_ITALIC,
-	BOLD_ITALIC_CONSTANT,
+	BOLD_ITALIC_TEXT,
 	BOLD_UNDERLINE,
-	BOLD_UNDERLINE_CONSTANT,
+	BOLD_UNDERLINE_TEXT,
 };
 
 enum ItalicType {
 	ITALIC_BOLD,
-	ITALIC_BOLD_CONSTANT,
+	ITALIC_BOLD_TEXT,
 	ITALIC_UNDERLINE,
-	ITALIC_UNDERLINE_CONSTANT,
+	ITALIC_UNDERLINE_TEXT,
 };
 
 enum UnderlineType {
 	UNDERLINE_BOLD,
-	UNDERLINE_BOLD_CONSTANT,
+	UNDERLINE_BOLD_TEXT,
 	UNDERLINE_ITALIC,
-	UNDERLINE_ITALIC_CONSTANT,
+	UNDERLINE_ITALIC_TEXT,
 };
 
-enum ConstantType {
-	STRING_CONSTANT,
-	EMPTY_CONSTANT,
+enum TextType {
+	STRING_TEXT,
+	EMPTY_TEXT,
 };
 
 typedef enum TitleType TitleType;
 typedef enum TagsType TagsType;
 typedef enum TagType TagType;
-typedef enum ConstantType ConstantType;
+typedef enum TextType TextType;
 typedef enum ListType ListType;
 typedef enum TableType TableType;
 typedef enum BoldType BoldType;
 typedef enum ItalicType ItalicType;
 typedef enum UnderlineType UnderlineType;
 
-struct Constant {
+struct Text {
 	// TODO: Investigar esto
 	union {
-		Constant *constant;
+		Text *text;
 	};
 	char *value;
-	ConstantType type;
+	TextType type;
 };
 
 struct BoldItalic {
-	Constant *constant;
+	Text *text;
 };
 
 struct BoldUnderline {
-	Constant *constant;
+	Text *text;
 };
 
 struct ItalicBold {
-	Constant *constant;
+	Text *text;
 };
 
 struct ItalicUnderline {
-	Constant *constant;
+	Text *text;
 };
 
 struct UnderlineBold {
-	Constant *constant;
+	Text *text;
 };
 
 struct UnderlineItalic {
-	Constant *constant;
+	Text *text;
 };
 
 struct Bold {
 	union {
 		BoldItalic *boldItalic;
 		BoldUnderline *boldUnderline;
-		Constant *constant;
+		Text *text;
 	};
 	BoldType type;
 };
@@ -163,7 +163,7 @@ struct Italic {
 	union {
 		ItalicBold *italicBold;
 		ItalicUnderline *italicUnderline;
-		Constant *constant;
+		Text *text;
 	};
 	ItalicType type;
 };
@@ -172,7 +172,7 @@ struct Underline {
 	union {
 		UnderlineBold *underlineBold;
 		UnderlineItalic *underlineItalic;
-		Constant *constant;
+		Text *text;
 	};
 	UnderlineType type;
 };
@@ -180,10 +180,10 @@ struct Underline {
 struct List {
 	union {
 		struct {
-			Constant *constant;
+			Text *text;
 			List *item;
 		};
-		Constant *lonelyConstant;
+		Text *lonelyText;
 	};
 	ListType type;
 };
@@ -191,10 +191,10 @@ struct List {
 struct Table {
 	union {
 		struct {
-			Constant *constant;
+			Text *text;
 			Table *column;
 		};
-		Constant *lonelyConstant;
+		Text *lonelyText;
 	};
 	TableType type;
 };
@@ -206,7 +206,7 @@ struct Tag {
 		Bold *bold;
 		Italic *italic;
 		Underline *underline;
-		Constant *constant;
+		Text *text;
 		char *value;
 	};
 	TagType type;
@@ -222,10 +222,10 @@ struct Tags {
 
 struct Title {
 	union {
-		Constant *lonelyConstant;
+		Text *lonelyText;
 		Tags *lonelyTags;
 		struct {
-			Constant *constant;
+			Text *text;
 			Tags *tags;
 		};
 	};
@@ -254,6 +254,6 @@ void freeItalicBold(ItalicBold *italicBold);
 void freeItalicUnderline(ItalicUnderline *italicUnderline);
 void freeUnderlineBold(UnderlineBold *underlineBold);
 void freeUnderlineItalic(UnderlineItalic *underlineItalic);
-void freeConstant(Constant *constant);
+void freeText(Text *text);
 
 #endif

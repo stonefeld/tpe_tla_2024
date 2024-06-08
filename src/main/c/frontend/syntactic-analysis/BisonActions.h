@@ -21,6 +21,7 @@ void shutdownBisonActionsModule();
 
 Program* ProgramSemanticAction(CompilerState* compilerState, Title* title);
 
+Title* LonelyTitleSemanticAction(Constant* constant);
 Title* TitleSemanticAction(Constant* constant, Tags* tags);
 Title* EmptyTitleSemanticAction(Tags* tags);
 
@@ -81,7 +82,7 @@ Underline* UnderlineItalicSemanticAction(UnderlineItalic* underlineItalic);
 UnderlineBold* UnderlineBoldItalicSemanticAction(Constant* constant);
 UnderlineItalic* UnderlineItalicBoldSemanticAction(Constant* constant);
 
-Constant* StringConstantSemanticAction(char* value);
+Constant* StringConstantSemanticAction(char* value, Constant* constant);
 Constant* EmptyConstantSemanticAction();
 
 #endif

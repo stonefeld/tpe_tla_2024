@@ -45,8 +45,9 @@ static void _logLexicalAnalyzerContext(const char *functionName, LexicalAnalyzer
  */
 static void _logLexicalAnalyzerContext(const char *functionName, LexicalAnalyzerContext *lexicalAnalyzerContext) {
 	char *escapedLexeme = escape(lexicalAnalyzerContext->lexeme);
-	logDebugging(_logger, "%s: %s (context = %d, length = %d, line = %d)", functionName, escapedLexeme,
-	             lexicalAnalyzerContext->currentContext, lexicalAnalyzerContext->length, lexicalAnalyzerContext->line);
+	logDebugging(_logger, "%s: %s, lexeme = %s   (context = %d, length = %d, line = %d)", functionName, escapedLexeme,
+	             lexicalAnalyzerContext->lexeme, lexicalAnalyzerContext->currentContext, lexicalAnalyzerContext->length,
+	             lexicalAnalyzerContext->line);
 	free(escapedLexeme);
 }
 

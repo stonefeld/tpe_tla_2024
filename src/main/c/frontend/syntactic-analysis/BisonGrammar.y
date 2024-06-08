@@ -129,7 +129,8 @@ program:
 	;
 
 title:
-		TITLE_START 			constant 			TITLE_END				tags			{ $$ = TitleSemanticAction($2, $4); }
+		TITLE_START 			constant 			TITLE_END								{ $$ = LonelyTitleSemanticAction($2); }
+	|	TITLE_START 			constant 			TITLE_END				tags			{ $$ = TitleSemanticAction($2, $4); }
 	|	tags																				{ $$ = EmptyTitleSemanticAction($1); }
 	;
 
@@ -215,7 +216,7 @@ underline_italic:
 ;
 
 constant:
-		STRING																			{ $$ = StringConstantSemanticAction($1); }
+		STRING					constant												{ $$ = StringConstantSemanticAction($1, $2); }
     |                                                                                   { $$ = EmptyConstantSemanticAction();}
 ;
 

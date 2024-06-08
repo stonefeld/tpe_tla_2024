@@ -47,6 +47,14 @@ Program* ProgramSemanticAction(CompilerState* compilerState, Title* title) {
 	return program;
 }
 
+Title* LonelyTitleSemanticAction(Constant* constant) {
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+	Title* title = calloc(1, sizeof(Title));
+	title->lonelyConstant = constant;
+	title->type = LONELY_TITLE;
+	return title;
+}
+
 Title* TitleSemanticAction(Constant* constant, Tags* tags) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	Title* title = calloc(1, sizeof(Title));
@@ -59,8 +67,8 @@ Title* TitleSemanticAction(Constant* constant, Tags* tags) {
 Title* EmptyTitleSemanticAction(Tags* tags) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	Title* title = calloc(1, sizeof(Title));
-	title->tags = tags;
-	title->type = EMPTY_TITLE;
+	title->lonelyTags = tags;
+	title->type = NO_TITLE;
 	return title;
 }
 
@@ -97,7 +105,7 @@ Tag* Heading2SemanticAction(Constant* constant) {
 	return heading2;
 }
 
-Tag* Heading3SemanticAction(Constant* constant){
+Tag* Heading3SemanticAction(Constant* constant) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	Tag* heading3 = calloc(1, sizeof(Tag));
 	heading3->constant = constant;
@@ -105,7 +113,7 @@ Tag* Heading3SemanticAction(Constant* constant){
 	return heading3;
 }
 
-Tag* PageSkipSemanticAction(Constant* constant){
+Tag* PageSkipSemanticAction(Constant* constant) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	Tag* pageSkip = calloc(1, sizeof(Tag));
 	pageSkip->constant = constant;
@@ -113,7 +121,7 @@ Tag* PageSkipSemanticAction(Constant* constant){
 	return pageSkip;
 }
 
-Tag* ImageSemanticAction(Constant* constant){
+Tag* ImageSemanticAction(Constant* constant) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	Tag* image = calloc(1, sizeof(Tag));
 	image->constant = constant;
@@ -121,7 +129,7 @@ Tag* ImageSemanticAction(Constant* constant){
 	return image;
 }
 
-Tag* CodeSemanticAction(Constant* constant){
+Tag* CodeSemanticAction(Constant* constant) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	Tag* code = calloc(1, sizeof(Tag));
 	code->constant = constant;
@@ -129,7 +137,7 @@ Tag* CodeSemanticAction(Constant* constant){
 	return code;
 }
 
-Tag* EscapeSemanticAction(Constant* constant){
+Tag* EscapeSemanticAction(Constant* constant) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	Tag* escape = calloc(1, sizeof(Tag));
 	escape->constant = constant;
@@ -193,7 +201,7 @@ Tag* ItalicSemanticAction(Italic* italic) {
 	return italicTag;
 }
 
-Tag* ItalicConstantSemanticAction(Constant* constant){ 
+Tag* ItalicConstantSemanticAction(Constant* constant) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	Tag* italicTag = calloc(1, sizeof(Tag));
 	italicTag->constant = constant;
@@ -201,7 +209,7 @@ Tag* ItalicConstantSemanticAction(Constant* constant){
 	return italicTag;
 }
 
-Tag* UnderlineSemanticAction(Underline* underline){
+Tag* UnderlineSemanticAction(Underline* underline) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	Tag* underlineTag = calloc(1, sizeof(Tag));
 	underlineTag->underline = underline;
@@ -291,7 +299,6 @@ Bold* BoldUnderlineSemanticAction(BoldUnderline* boldUnderline) {
 	return bold;
 }
 
-
 BoldItalic* BoldItalicUnderlineSemanticAction(Constant* constant) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	BoldItalic* boldItalic = calloc(1, sizeof(BoldItalic));
@@ -337,7 +344,6 @@ Italic* ItalicUnderlineSemanticAction(ItalicUnderline* italicUnderline) {
 	italic->type = ITALIC_UNDERLINE;
 	return italic;
 }
-
 
 ItalicBold* ItalicBoldUnderlineSemanticAction(Constant* constant) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
@@ -399,15 +405,16 @@ UnderlineItalic* UnderlineItalicBoldSemanticAction(Constant* constant) {
 	return underlineItalic;
 }
 
-Constant* StringConstantSemanticAction(char* value) {
+Constant* StringConstantSemanticAction(char* value, Constant* constant) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
-	Constant* constant = calloc(1, sizeof(Constant));
-	constant->value = value;
-	constant->type = STRING_CONSTANT;
-	return constant;
+	Constant* newConstant = calloc(1, sizeof(Constant));
+	newConstant->value = value;
+	newConstant->constant = constant;
+	newConstant->type = STRING_CONSTANT;
+	return newConstant;
 }
 
-Constant* EmptyConstantSemanticAction(){
+Constant* EmptyConstantSemanticAction() {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	Constant* constant = calloc(1, sizeof(Constant));
 	constant->type = EMPTY_CONSTANT;

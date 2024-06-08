@@ -41,7 +41,8 @@ typedef struct Program Program;
 
 enum TitleType {
 	TITLE,
-	EMPTY_TITLE,
+	NO_TITLE,
+	LONELY_TITLE,
 };
 
 enum TagsType {
@@ -117,6 +118,10 @@ typedef enum ItalicType ItalicType;
 typedef enum UnderlineType UnderlineType;
 
 struct Constant {
+	// TODO: Investigar esto
+	union {
+		Constant *constant;
+	};
 	char *value;
 	ConstantType type;
 };
@@ -196,36 +201,20 @@ struct Table {
 
 struct Tag {
 	union {
-		struct {
-			List *list;
-		};
-		struct {
-			Table *table;
-		};
-		struct {
-			Bold *bold;
-		};
-		struct {
-			Italic *italic;
-		};
-		struct {
-			Underline *underline;
-		};
-		struct {
-			Constant *constant;
-		};
-		struct {
-			char *value;
-		};
+		List *list;
+		Table *table;
+		Bold *bold;
+		Italic *italic;
+		Underline *underline;
+		Constant *constant;
+		char *value;
 	};
 	TagType type;
 };
 
 struct Tags {
 	union {
-		struct {
-			Tags *tags;
-		};
+		Tags *tags;
 	};
 	Tag *tag;
 	TagsType type;
@@ -233,10 +222,12 @@ struct Tags {
 
 struct Title {
 	union {
+		Constant *lonelyConstant;
+		Tags *lonelyTags;
 		struct {
 			Constant *constant;
+			Tags *tags;
 		};
-		Tags *tags;
 	};
 	TitleType type;
 };

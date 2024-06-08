@@ -4,7 +4,6 @@
 #include <stdlib.h>
 
 #include "../../shared/Logger.h"
-#include "BisonParser.h"
 
 /** Initialize module's internal state. */
 void initializeAbstractSyntaxTreeModule();
@@ -32,6 +31,7 @@ typedef struct List List;
 
 typedef struct Constant Constant;
 typedef struct Tag Tag;
+typedef struct Tags Tags;
 typedef struct Title Title;
 typedef struct Program Program;
 
@@ -42,6 +42,11 @@ typedef struct Program Program;
 enum TitleType {
 	TITLE,
 	EMPTY_TITLE,
+};
+
+enum TagsType {
+	TAGS,
+	END_TAG,
 };
 
 enum TagType {
@@ -62,7 +67,7 @@ enum TagType {
 	UNDERLINE_CONSTANT,
 	UNDERLINE,
 	TABLE,
-	CONSTANT,
+	STRING_TAG,
 };
 
 enum ListType {
@@ -102,6 +107,7 @@ enum ConstantType {
 };
 
 typedef enum TitleType TitleType;
+typedef enum TagsType TagsType;
 typedef enum TagType TagType;
 typedef enum ConstantType ConstantType;
 typedef enum ListType ListType;
@@ -192,39 +198,45 @@ struct Tag {
 	union {
 		struct {
 			List *list;
-			Tag *listTag;
 		};
 		struct {
 			Table *table;
-			Tag *tableTag;
 		};
 		struct {
 			Bold *bold;
-			Tag *boldTag;
 		};
 		struct {
 			Italic *italic;
-			Tag *italicTag;
 		};
 		struct {
 			Underline *underline;
-			Tag *underlineTag;
 		};
 		struct {
 			Constant *constant;
-			Tag *constantTag;
+		};
+		struct {
+			char *value;
 		};
 	};
 	TagType type;
+};
+
+struct Tags {
+	union {
+		struct {
+			Tags *tags;
+		};
+	};
+	Tag *tag;
+	TagsType type;
 };
 
 struct Title {
 	union {
 		struct {
 			Constant *constant;
-			Tag *tag;
 		};
-		Tag *lonelyTag;
+		Tags *tags;
 	};
 	TitleType type;
 };
@@ -238,6 +250,7 @@ struct Program {
  */
 void freeProgram(Program *program);
 void freeTitle(Title *title);
+void freeTags(Tags *tags);
 void freeTag(Tag *tag);
 void freeList(List *list);
 void freeTable(Table *table);

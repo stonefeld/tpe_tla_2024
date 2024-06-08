@@ -32,13 +32,29 @@ void freeTitle(Title* title) {
 		switch (title->type) {
 			case TITLE:
 				freeConstant(title->constant);
-				freeTag(title->tag);
+				freeTags(title->tags);
 				break;
 			case EMPTY_TITLE:
-				freeTag(title->lonelyTag);
+				freeTags(title->tags);
 				break;
 		}
 		free(title);
+	}
+}
+
+void freeTags(Tags* tags) {
+	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
+	if (tags != NULL) {
+		switch (tags->type) {
+			case TAGS:
+				freeTags(tags->tags);
+				freeTag(tags->tag);
+				break;
+			case END_TAG:
+				freeTag(tags->tag);
+				break;
+		}
+		free(tags);
 	}
 }
 
@@ -57,30 +73,26 @@ void freeTag(Tag* tag) {
 			case BOLD_CONSTANT:
 			case ITALIC_CONSTANT:
 			case UNDERLINE_CONSTANT:
-			case CONSTANT:
 				freeConstant(tag->constant);
-				freeTag(tag->constantTag);
+				break;
+			case STRING_TAG:
+				free(tag->value);
 				break;
 			case ORDERED_LIST:
 			case UNORDERED_LIST:
 				freeList(tag->list);
-				freeTag(tag->listTag);
 				break;
 			case TABLE:
 				freeTable(tag->table);
-				freeTag(tag->tableTag);
 				break;
 			case BOLD:
 				freeBold(tag->bold);
-				freeTag(tag->boldTag);
 				break;
 			case ITALIC:
 				freeItalic(tag->italic);
-				freeTag(tag->italicTag);
 				break;
 			case UNDERLINE:
 				freeUnderline(tag->underline);
-				freeTag(tag->underlineTag);
 				break;
 		}
 		free(tag);

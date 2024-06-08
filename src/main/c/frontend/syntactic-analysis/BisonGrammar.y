@@ -31,6 +31,7 @@
 
 	Constant * constant;
 	Tag * tag;
+	Tags * tags;
 	Title * title;
 	Program * program;
 }
@@ -50,7 +51,7 @@
 */
 
 /** Terminals. */
-/* %token <token> UNKNOWN */
+%token <token> UNKNOWN
 %token <string> STRING
 %token <token> TITLE_END
 %token <token> TITLE_START
@@ -103,6 +104,7 @@
 %type <underlineItalic> underline_italic
 %type <table> table
 %type <tag> tag
+%type <tags> tags
 %type <title> title
 %type <program> program
 
@@ -127,29 +129,34 @@ program:
 	;
 
 title:
-		TITLE_START 			constant 			TITLE_END				tag				{ $$ = TitleSemanticAction($2, $4); }
-	|	tag																					{ $$ = EmptyTitleSemanticAction($1); }
+		TITLE_START 			constant 			TITLE_END				tags			{ $$ = TitleSemanticAction($2, $4); }
+	|	tags																				{ $$ = EmptyTitleSemanticAction($1); }
+	;
+
+tags:
+		tag						tags														{ $$ = TagsSemanticAction($1, $2); }
+	|	tag																					{ $$ = EndTagSemanticAction($1); }
 	;
 
 tag:
-	  HEADING_1_START 			constant		 	HEADING_1_END			tag			  	{ $$ = Heading1SemanticAction($2, $4); }
-	| HEADING_2_START 			constant		 	HEADING_2_END			tag				{ $$ = Heading2SemanticAction($2, $4); }
-	| HEADING_3_START 			constant		 	HEADING_3_END			tag				{ $$ = Heading3SemanticAction($2, $4); }
-	| PAGE_SKIP_START 			constant		 	PAGE_SKIP_END			tag				{ $$ = PageSkipSemanticAction($2, $4); }
-	| IMAGE_START 				constant		 	IMAGE_END				tag				{ $$ = ImageSemanticAction($2, $4); }
-	| CODE_START 				constant		 	CODE_END				tag				{ $$ = CodeSemanticAction($2, $4); }
-	| ESCAPE_START 				constant		 	ESCAPE_END				tag				{ $$ = EscapeSemanticAction($2, $4); }
-	| EQUATION_START 			constant		 	EQUATION_END			tag				{ $$ = EquationSemanticAction($2, $4); }
-	| UNORDERED_LIST_START 		list				UNORDERED_LIST_END		tag				{ $$ = UnorderedListSemanticAction($2, $4); }
-	| ORDERED_LIST_START 		list	 			ORDERED_LIST_END		tag				{ $$ = OrderedListSemanticAction($2, $4); }
-	| BOLD_START 				bold	 			BOLD_END				tag				{ $$ = BoldSemanticAction($2, $4); }
-	| BOLD_START 				constant 			BOLD_END				tag				{ $$ = BoldConstantSemanticAction($2, $4); }
-	| ITALIC_START 				italic		 		ITALIC_END				tag				{ $$ = ItalicSemanticAction($2, $4); }
-	| ITALIC_START 				constant 			ITALIC_END				tag				{ $$ = ItalicConsatntSemanticAction($2, $4); }
-	| UNDERLINE_START 			underline	 		UNDERLINE_END			tag				{ $$ = UnderlineSemanticAction($2, $4); }
-	| UNDERLINE_START 			constant 			UNDERLINE_END			tag				{ $$ = UnderlineConstantSemanticAction($2, $4); }
-	| TABLE_START 				table				TABLE_END				tag				{ $$ = TableSemanticAction($2, $4); }
-	| constant 					tag															{ $$ = ConstantSemanticAction($1, $2); }
+	  HEADING_1_START 			constant		 	HEADING_1_END						  	{ $$ = Heading1SemanticAction($2); }
+	| HEADING_2_START 			constant		 	HEADING_2_END							{ $$ = Heading2SemanticAction($2); }
+	| HEADING_3_START 			constant		 	HEADING_3_END							{ $$ = Heading3SemanticAction($2); }
+	| PAGE_SKIP_START 			constant		 	PAGE_SKIP_END							{ $$ = PageSkipSemanticAction($2); }
+	| IMAGE_START 				constant		 	IMAGE_END								{ $$ = ImageSemanticAction($2); }
+	| CODE_START 				constant		 	CODE_END								{ $$ = CodeSemanticAction($2); }
+	| ESCAPE_START 				constant		 	ESCAPE_END								{ $$ = EscapeSemanticAction($2); }
+	| EQUATION_START 			constant		 	EQUATION_END							{ $$ = EquationSemanticAction($2); }
+	| UNORDERED_LIST_START 		list				UNORDERED_LIST_END						{ $$ = UnorderedListSemanticAction($2); }
+	| ORDERED_LIST_START 		list	 			ORDERED_LIST_END						{ $$ = OrderedListSemanticAction($2); }
+	| BOLD_START 				bold	 			BOLD_END								{ $$ = BoldSemanticAction($2); }
+	| BOLD_START 				constant 			BOLD_END								{ $$ = BoldConstantSemanticAction($2); }
+	| ITALIC_START 				italic		 		ITALIC_END								{ $$ = ItalicSemanticAction($2); }
+	| ITALIC_START 				constant 			ITALIC_END								{ $$ = ItalicConstantSemanticAction($2); }
+	| UNDERLINE_START 			underline	 		UNDERLINE_END							{ $$ = UnderlineSemanticAction($2); }
+	| UNDERLINE_START 			constant 			UNDERLINE_END							{ $$ = UnderlineConstantSemanticAction($2); }
+	| TABLE_START 				table				TABLE_END								{ $$ = TableSemanticAction($2); }
+	| STRING																				{ $$ = StringTagSemanticAction($1); }
 	;
 
 list:

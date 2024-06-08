@@ -47,174 +47,182 @@ Program* ProgramSemanticAction(CompilerState* compilerState, Title* title) {
 	return program;
 }
 
-Title* TitleSemanticAction(Constant* constant, Tag* tag) {
+Title* TitleSemanticAction(Constant* constant, Tags* tags) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	Title* title = calloc(1, sizeof(Title));
 	title->constant = constant;
-	title->tag = tag;
+	title->tags = tags;
 	title->type = TITLE;
 	return title;
 }
 
-Title* EmptyTitleSemanticAction(Tag* tag) {
+Title* EmptyTitleSemanticAction(Tags* tags) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	Title* title = calloc(1, sizeof(Title));
-	title->lonelyTag = tag;
+	title->tags = tags;
 	title->type = EMPTY_TITLE;
 	return title;
 }
 
-Tag* Heading1SemanticAction(Constant* constant, Tag* tag) {
+Tags* TagsSemanticAction(Tag* tag, Tags* tags) {
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+	Tags* tagsList = calloc(1, sizeof(Tags));
+	tagsList->tag = tag;
+	tagsList->tags = tags;
+	tagsList->type = TAGS;
+	return tagsList;
+}
+
+Tags* EndTagSemanticAction(Tag* tag) {
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+	Tags* tagsList = calloc(1, sizeof(Tags));
+	tagsList->tag = tag;
+	tagsList->type = END_TAG;
+	return tagsList;
+}
+
+Tag* Heading1SemanticAction(Constant* constant) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	Tag* heading1 = calloc(1, sizeof(Tag));
 	heading1->constant = constant;
-	heading1->constantTag = tag;
 	heading1->type = HEADING_1;
 	return heading1;
 }
 
-Tag* Heading2SemanticAction(Constant* constant, Tag* tag) {
+Tag* Heading2SemanticAction(Constant* constant) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	Tag* heading2 = calloc(1, sizeof(Tag));
 	heading2->constant = constant;
-	heading2->constantTag = tag;
 	heading2->type = HEADING_2;
 	return heading2;
 }
 
-Tag* Heading3SemanticAction(Constant* constant, Tag* tag){
+Tag* Heading3SemanticAction(Constant* constant){
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	Tag* heading3 = calloc(1, sizeof(Tag));
 	heading3->constant = constant;
-	heading3->constantTag = tag;
 	heading3->type = HEADING_3;
 	return heading3;
 }
 
-Tag* PageSkipSemanticAction(Constant* constant, Tag* tag){
+Tag* PageSkipSemanticAction(Constant* constant){
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	Tag* pageSkip = calloc(1, sizeof(Tag));
 	pageSkip->constant = constant;
-	pageSkip->constantTag = tag;
 	pageSkip->type = PAGE_SKIP;
 	return pageSkip;
 }
 
-Tag* ImageSemanticAction(Constant* constant, Tag* tag){
+Tag* ImageSemanticAction(Constant* constant){
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	Tag* image = calloc(1, sizeof(Tag));
 	image->constant = constant;
-	image->constantTag = tag;
 	image->type = IMAGE;
 	return image;
 }
 
-Tag* CodeSemanticAction(Constant* constant, Tag* tag){
+Tag* CodeSemanticAction(Constant* constant){
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	Tag* code = calloc(1, sizeof(Tag));
 	code->constant = constant;
-	code->constantTag = tag;
 	code->type = CODE;
 	return code;
 }
 
-Tag* EscapeSemanticAction(Constant* constant, Tag* tag){
+Tag* EscapeSemanticAction(Constant* constant){
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	Tag* escape = calloc(1, sizeof(Tag));
 	escape->constant = constant;
-	escape->constantTag = tag;
 	escape->type = ESCAPE;
 	return escape;
 }
 
-Tag* EquationSemanticAction(Constant* constant, Tag* tag) {
+Tag* EquationSemanticAction(Constant* constant) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	Tag* equation = calloc(1, sizeof(Tag));
 	equation->constant = constant;
-	equation->constantTag = tag;
 	equation->type = EQUATION;
 	return equation;
 }
 
-Tag* UnorderedListSemanticAction(List* list, Tag* tag) {
+Tag* UnorderedListSemanticAction(List* list) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	Tag* unorderedList = calloc(1, sizeof(Tag));
 	unorderedList->list = list;
-	unorderedList->listTag = tag;
 	unorderedList->type = UNORDERED_LIST;
 	return unorderedList;
 }
 
-Tag* OrderedListSemanticAction(List* list, Tag* tag) {
+Tag* OrderedListSemanticAction(List* list) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	Tag* orderedList = calloc(1, sizeof(Tag));
 	orderedList->list = list;
-	orderedList->listTag = tag;
 	orderedList->type = ORDERED_LIST;
 	return orderedList;
 }
 
-Tag* TableSemanticAction(Table* table, Tag* tag) {
+Tag* TableSemanticAction(Table* table) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	Tag* tableTag = calloc(1, sizeof(Tag));
 	tableTag->table = table;
-	tableTag->tableTag = tag;
 	tableTag->type = TABLE;
 	return tableTag;
 }
 
-Tag* BoldSemanticAction(Bold* bold, Tag* tag) {
+Tag* BoldSemanticAction(Bold* bold) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	Tag* boldTag = calloc(1, sizeof(Tag));
 	boldTag->bold = bold;
-	boldTag->boldTag = tag;
 	boldTag->type = BOLD;
 	return boldTag;
 }
 
-Tag* BoldConstantSemanticAction(Constant* constant, Tag* tag) {
+Tag* BoldConstantSemanticAction(Constant* constant) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	Tag* boldTag = calloc(1, sizeof(Tag));
 	boldTag->constant = constant;
-	boldTag->constantTag = tag;
 	boldTag->type = BOLD_CONSTANT;
 	return boldTag;
 }
 
-Tag* ItalicSemanticAction(Italic* italic, Tag* tag) {
+Tag* ItalicSemanticAction(Italic* italic) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	Tag* italicTag = calloc(1, sizeof(Tag));
 	italicTag->italic = italic;
-	italicTag->italicTag = tag;
 	italicTag->type = ITALIC;
 	return italicTag;
 }
 
-Tag* ItalicConstantSemanticAction(Constant* constant, Tag* tag){ 
+Tag* ItalicConstantSemanticAction(Constant* constant){ 
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	Tag* italicTag = calloc(1, sizeof(Tag));
 	italicTag->constant = constant;
-	italicTag->constantTag = tag;
 	italicTag->type = ITALIC_CONSTANT;
 	return italicTag;
 }
 
-Tag* UnderlineSemanticAction(Underline* underline, Tag* tag){
+Tag* UnderlineSemanticAction(Underline* underline){
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	Tag* underlineTag = calloc(1, sizeof(Tag));
 	underlineTag->underline = underline;
-	underlineTag->underlineTag = tag;
 	underlineTag->type = UNDERLINE;
 	return underlineTag;
 }
 
-Tag* UnderlineConstantSemanticAction(Constant* constant, Tag* tag) {
+Tag* UnderlineConstantSemanticAction(Constant* constant) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	Tag* underlineTag = calloc(1, sizeof(Tag));
 	underlineTag->constant = constant;
-	underlineTag->constantTag = tag;
 	underlineTag->type = UNDERLINE_CONSTANT;
 	return underlineTag;
+}
+
+Tag* StringTagSemanticAction(char* value) {
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+	Tag* constantTag = calloc(1, sizeof(Tag));
+	constantTag->value = value;
+	constantTag->type = STRING_TAG;
+	return constantTag;
 }
 
 List* ItemSemanticAction(Constant* constant, List* item) {

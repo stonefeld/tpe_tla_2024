@@ -84,7 +84,7 @@ Tags* TagsSemanticAction(Tag* tag, Tags* tags) {
 Tags* EndTagSemanticAction(Tag* tag) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	Tags* tagsList = calloc(1, sizeof(Tags));
-	tagsList->tag = tag;
+	tagsList->endTag = tag;
 	tagsList->type = END_TAG;
 	return tagsList;
 }

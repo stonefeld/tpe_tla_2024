@@ -118,10 +118,7 @@ typedef enum ItalicType ItalicType;
 typedef enum UnderlineType UnderlineType;
 
 struct Text {
-	// TODO: Investigar esto
-	union {
-		Text *text;
-	};
+	Text *text;
 	char *value;
 	TextType type;
 };
@@ -214,9 +211,12 @@ struct Tag {
 
 struct Tags {
 	union {
-		Tags *tags;
+		struct {
+			Tag *tag;
+			Tags *tags;
+		};
+		Tag *endTag;
 	};
-	Tag *tag;
 	TagsType type;
 };
 

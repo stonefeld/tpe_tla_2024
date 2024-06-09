@@ -1,4 +1,4 @@
-// #include "backend/code-generation/Generator.h"
+#include "backend/code-generation/Generator.h"
 #include "frontend/lexical-analysis/FlexActions.h"
 #include "frontend/syntactic-analysis/AbstractSyntaxTree.h"
 #include "frontend/syntactic-analysis/BisonActions.h"
@@ -17,7 +17,7 @@ const int main(const int count, const char** arguments) {
 	initializeBisonActionsModule();
 	initializeSyntacticAnalyzerModule();
 	initializeAbstractSyntaxTreeModule();
-	// initializeGeneratorModule();
+	initializeGeneratorModule();
 
 	// Logs the arguments of the application.
 	for (int k = 0; k < count; ++k) {
@@ -31,7 +31,7 @@ const int main(const int count, const char** arguments) {
 	if (syntacticAnalysisStatus == ACCEPT) {
 		logDebugging(logger, "Computing title value...");
 		Program* program = compilerState.abstractSyntaxtTree;
-		// generate(&compilerState);
+		generate(&compilerState);
 		logDebugging(logger, "Releasing AST resources...");
 		freeProgram(program);
 	} else {
@@ -40,7 +40,7 @@ const int main(const int count, const char** arguments) {
 	}
 
 	logDebugging(logger, "Releasing modules resources...");
-	// shutdownGeneratorModule();
+	shutdownGeneratorModule();
 	shutdownAbstractSyntaxTreeModule();
 	shutdownSyntacticAnalyzerModule();
 	shutdownBisonActionsModule();

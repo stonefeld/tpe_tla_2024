@@ -10,6 +10,7 @@
 	/** Terminals. */
 
 	char * string;
+	int number;
 	Token token;
 
 	/** Non-terminals. */
@@ -52,6 +53,7 @@
 
 /** Terminals. */
 %token <token> UNKNOWN
+%token <number> NUMBER
 %token <string> STRING
 %token <token> TITLE_END
 %token <token> TITLE_START
@@ -145,7 +147,7 @@ tag:
 	| HEADING_3_START 			text		 		HEADING_3_END							{ $$ = Heading3SemanticAction($2); }
 	| PAGE_SKIP_START 			text		 		PAGE_SKIP_END							{ $$ = PageSkipSemanticAction($2); }
 	| IMAGE_START 				text		 		IMAGE_END								{ $$ = ImageSemanticAction($2); }
-	| CODE_START 				text		 		CODE_END								{ $$ = CodeSemanticAction($2); }
+	| CODE_START 				STRING				text		 		CODE_END			{ $$ = CodeSemanticAction($2, $3); }
 	| ESCAPE_START 				text		 		ESCAPE_END								{ $$ = EscapeSemanticAction($2); }
 	| EQUATION_START 			text		 		EQUATION_END							{ $$ = EquationSemanticAction($2); }
 	| UNORDERED_LIST_START 		list				UNORDERED_LIST_END						{ $$ = UnorderedListSemanticAction($2); }
@@ -156,7 +158,7 @@ tag:
 	| ITALIC_START 				text 				ITALIC_END								{ $$ = ItalicTextSemanticAction($2); }
 	| UNDERLINE_START 			underline	 		UNDERLINE_END							{ $$ = UnderlineSemanticAction($2); }
 	| UNDERLINE_START 			text 				UNDERLINE_END							{ $$ = UnderlineTextSemanticAction($2); }
-	| TABLE_START 				table				TABLE_END								{ $$ = TableSemanticAction($2); }
+	| TABLE_START 				STRING				table				TABLE_END			{ $$ = TableSemanticAction($2, $3); }
 	| STRING																				{ $$ = StringTagSemanticAction($1); }
 	;
 

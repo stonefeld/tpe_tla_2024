@@ -33,13 +33,13 @@ Tag* Heading2SemanticAction(Text* text);
 Tag* Heading3SemanticAction(Text* text);
 Tag* PageSkipSemanticAction(Text* text);
 Tag* ImageSemanticAction(Text* text);
-Tag* CodeSemanticAction(Text* text);
+Tag* CodeSemanticAction(char* language, Text* text);
 Tag* EscapeSemanticAction(Text* text);
 Tag* EquationSemanticAction(Text* text);
 
 Tag* UnorderedListSemanticAction(List* list);
 Tag* OrderedListSemanticAction(List* list);
-Tag* TableSemanticAction(Table* table);
+Tag* TableSemanticAction(char* cols, Table* table);
 
 Tag* BoldSemanticAction(Bold* bold);
 Tag* BoldTextSemanticAction(Text* text);

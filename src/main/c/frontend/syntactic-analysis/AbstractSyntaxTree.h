@@ -199,12 +199,19 @@ struct Table {
 struct Tag {
 	union {
 		List *list;
-		Table *table;
+		struct {
+			int cols;
+			Table *table;
+		};
 		Bold *bold;
 		Italic *italic;
 		Underline *underline;
 		Text *text;
 		char *value;
+		struct {
+			char *language;
+			Text *code;
+		};
 	};
 	TagType type;
 };

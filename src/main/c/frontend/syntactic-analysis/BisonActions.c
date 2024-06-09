@@ -1,5 +1,7 @@
 #include "BisonActions.h"
 
+#include <stdlib.h>
+
 #include "AbstractSyntaxTree.h"
 
 /* MODULE INTERNAL STATE */
@@ -129,10 +131,11 @@ Tag* ImageSemanticAction(Text* text) {
 	return image;
 }
 
-Tag* CodeSemanticAction(Text* text) {
+Tag* CodeSemanticAction(char* language, Text* text) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	Tag* code = calloc(1, sizeof(Tag));
-	code->text = text;
+	code->language = language;
+	code->code = text;
 	code->type = CODE;
 	return code;
 }
@@ -169,9 +172,10 @@ Tag* OrderedListSemanticAction(List* list) {
 	return orderedList;
 }
 
-Tag* TableSemanticAction(Table* table) {
+Tag* TableSemanticAction(char* cols, Table* table) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	Tag* tableTag = calloc(1, sizeof(Tag));
+	tableTag->cols = atoi(cols);
 	tableTag->table = table;
 	tableTag->type = TABLE;
 	return tableTag;

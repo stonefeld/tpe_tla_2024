@@ -26,7 +26,7 @@ static void _generateTitle(Title* title);
 static void _generateTags(Tags* tags);
 static void _generateTag(Tag* tag);
 static void _generateList(List* list);
-static void _generateTable(Table* table);
+static void _generateTable(Table* table, int totalCols, int currentCol);
 static void _generateBold(Bold* bold);
 static void _generateBoldItalic(BoldItalic* boldItalic);
 static void _generateBoldUnderline(BoldUnderline* boldUnderline);
@@ -114,9 +114,12 @@ static void _generateTag(Tag* tag) {
 			_output("%s", "}\n\\end{center}\n");
 			break;
 		case CODE:
-			_output("%s", "\\begin{minted}{text}\n");
-			_generateText(tag->text);
+			_output("%s", "\\begin{minted}{");
+			_output("%s", tag->language);
+			_output("%s", "}\n");
+			_generateText(tag->code);
 			_output("%s", "\n\\end{minted}\n");
+			break;
 		case ESCAPE: _generateText(tag->text); break;
 		case EQUATION:
 			_output("%s%s%s", "\\[\n");
@@ -162,7 +165,15 @@ static void _generateTag(Tag* tag) {
 			_generateUnderline(tag->underline);
 			_output("%s", "}");
 			break;
-		case TABLE: break;
+		case TABLE:
+			_output("%s", "\\begin{center}\n\\begin{tabular} { | ");
+			for (int i = 0; i < tag->cols; i++) {
+				_output("%s", "c | ");
+			}
+			_output("%s", "}\n\\hline\n");
+			_generateTable(tag->table, tag->cols, 1);
+			_output("%s", "\\end{tabular}\n\\end{center}\n");
+			break;
 		case STRING_TAG: _output("%s ", tag->value); break;
 		default: logError(_logger, "The specified tag type is unknown: %d", tag->type); break;
 	}
@@ -191,21 +202,27 @@ static void _generateList(List* list) {
 /**
  * Generates the output of a table.
  */
-static void _generateTable(Table* table) {
-	// switch (table->type) {
-	// 	case LONELY_COLUMN:
-	// 		_output(1 + indentationLevel, "%s%s%s", "[ $", "CELL_SEPARATOR_START", "$, circle, draw, purple ]\n");
-	// 		_generateText(1 + indentationLevel, table->lonelyText);
-	// 		_output(1 + indentationLevel, "%s%s%s", "[ $", "CELL_SEPARATOR_END", "$, circle, draw, purple ]\n");
-	// 		break;
-	// 	case MULTIPLE_COLUMNS:
-	// 		_output(1 + indentationLevel, "%s%s%s", "[ $", "CELL_SEPARATOR_START", "$, circle, draw, purple ]\n");
-	// 		_generateText(1 + indentationLevel, table->text);
-	// 		_output(1 + indentationLevel, "%s%s%s", "[ $", "CELL_SEPARATOR_END", "$, circle, draw, purple ]\n");
-	// 		_generateTable(1 + indentationLevel, table->column);
-	// 		break;
-	// 	default: logError(_logger, "The specified table type is unknown: %d", table->type); break;
-	// }
+static void _generateTable(Table* table, int totalCols, int currentCol) {
+	switch (table->type) {
+		case LONELY_COLUMN:
+			_generateText(table->text);
+			for (int i = currentCol + 1; i <= totalCols; i++) {
+				_output("%s", " &");
+			}
+			_output("%s", " \\\\\n\\hline\n");
+			break;
+		case MULTIPLE_COLUMNS:
+			_generateText(table->text);
+			if (currentCol < totalCols) {
+				_output("%s", " & ");
+				_generateTable(table->column, totalCols, currentCol + 1);
+			} else {
+				_output("%s", " \\\\\n\\hline\n");
+				_generateTable(table->column, totalCols, 1);
+			}
+			break;
+		default: logError(_logger, "The specified table type is unknown: %d", table->type); break;
+	}
 }
 
 /**

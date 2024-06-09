@@ -64,12 +64,15 @@ void freeTag(Tag* tag) {
 			case HEADING_3:
 			case PAGE_SKIP:
 			case IMAGE:
-			case CODE:
 			case ESCAPE:
 			case EQUATION:
 			case BOLD_TEXT:
 			case ITALIC_TEXT:
 			case UNDERLINE_TEXT: freeText(tag->text); break;
+			case CODE:
+				freeText(tag->code);
+				free(tag->language);
+				break;
 			case STRING_TAG: free(tag->value); break;
 			case ORDERED_LIST:
 			case UNORDERED_LIST: freeList(tag->list); break;

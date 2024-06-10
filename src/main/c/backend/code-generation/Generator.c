@@ -171,7 +171,7 @@ static void _generateTag(Tag* tag) {
 			_generateTable(tag->table, tag->cols, 1);
 			_output("%s", "\\end{tabular}\n\\end{center}\n");
 			break;
-		case STRING_TAG: _output("%s ", tag->value); break;
+		case STRING_TAG: _output("%s", tag->value); break;
 		default: logError(_logger, "The specified tag type is unknown: %d", tag->type); break;
 	}
 }
@@ -369,11 +369,7 @@ static void _generateUnderlineItalic(UnderlineItalic* underlineItalic) {
 static void _generateText(Text* text) {
 	switch (text->type) {
 		case STRING_TEXT:
-			if (text->text->type == STRING_TEXT) {
-				_output("%s ", text->value);
-			} else {
-				_output("%s", text->value);
-			}
+			_output("%s", text->value);
 			_generateText(text->text);
 			break;
 		case EMPTY_TEXT: break;

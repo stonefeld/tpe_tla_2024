@@ -1,4 +1,4 @@
-💻 java 
+💻java 
 public class QueryArguments implements Iterable<QueryObject> {
 
 	private final List<QueryObject> conditions = new ArrayList<>();
@@ -23,4 +23,5 @@ public class QueryArguments implements Iterable<QueryObject> {
 		return conditions.isEmpty();
 	}
 
-} 💻
+}
+💻

@@ -47,15 +47,15 @@ NOCANA ^{CANA}+
 "📊"                                    { return TableLexemeAction(createLexicalAnalyzerContext()); }
 "💻"                                    { return CodeLexemeAction(createLexicalAnalyzerContext()); }
 "👮‍♂️"                                    { BEGIN(CANA); return EscapedLexemeAction(createLexicalAnalyzerContext()); }
-"🤓"                                    { return EquationLexemeAction(createLexicalAnalyzerContext()); }
 
 
 [[:space:]]+						    { IgnoredLexemeAction(createLexicalAnalyzerContext()); }
 {TEXT}									{ return StringLexemeAction(createLexicalAnalyzerContext()); }
 .                                       { return UnknownLexemeAction(createLexicalAnalyzerContext()); }
 
-<CANA>"👮‍♂️"                             { BEGIN(INITIAL); return EscapedLexemeAction(createLexicalAnalyzerContext()); }
-<CANA>{NOCANA}                         { return StringLexemeAction(createLexicalAnalyzerContext()); }
+<CANA>"👮‍♂️"                              { BEGIN(INITIAL); return EscapedLexemeAction(createLexicalAnalyzerContext()); }
+<CANA>{NOCANA}                          { return StringLexemeAction(createLexicalAnalyzerContext()); }
+
 %%
 
 #include "FlexExport.h"

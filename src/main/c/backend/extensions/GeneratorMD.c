@@ -1,5 +1,5 @@
-#ifndef MARKDOWN_GENERATOR
-#include "Generator.h"
+#ifdef MARKDOWN_GENERATOR
+#include "../code-generation/Generator.h"
 
 // TODO: CHEQUEAR ESTO
 #include "../../frontend/syntactic-analysis/BisonParser.h"
@@ -26,7 +26,7 @@ static void _generateProgram(Program* program);
 static void _generateTitle(Title* title);
 static void _generateTags(Tags* tags);
 static void _generateTag(Tag* tag);
-static void _generateList(List* list);
+static void _generateList(List* list, boolean isOrdered);
 static void _generateTable(Table* table, int totalCols, int currentCol);
 static void _generateBold(Bold* bold);
 static void _generateBoldItalic(BoldItalic* boldItalic);
@@ -56,19 +56,16 @@ static void _generateProgram(Program* program) {
 static void _generateTitle(Title* title) {
 	switch (title->type) {
 		case TITLE:
-			_output("%s", "\\title{");
+			_output("%s", "# ");
 			_generateText(title->text);
-			_output("%s", "}\n\\author{}\n\\date{}\n\n\\begin{document}\n\n\\maketitle\n\n");
+			_output("%s", "\n\n");
 			_generateTags(title->tags);
 			break;
-		case NO_TITLE:
-			_output("%s", "\\begin{document}\n");
-			_generateTags(title->lonelyTags);
-			break;
+		case NO_TITLE: _generateTags(title->lonelyTags); break;
 		case LONELY_TITLE:
-			_output("%s", "\\title{");
+			_output("%s", "# ");
 			_generateText(title->lonelyText);
-			_output("%s", "}\n\\author{}\n\\date{}\n\n\\begin{document}\n\n\\maketitle\n\n");
+			_output("%s", "\n\n");
 			break;
 		default: logError(_logger, "The specified title type is unknown: %d", title->type); break;
 	}
@@ -94,85 +91,89 @@ static void _generateTags(Tags* tags) {
 static void _generateTag(Tag* tag) {
 	switch (tag->type) {
 		case HEADING_1:
-			_output("%s", "\\section{");
+			_output("%s", "\n## ");
 			_generateText(tag->text);
-			_output("%s", "}\n");
+			_output("%s", "\n");
 			break;
 		case HEADING_2:
-			_output("%s", "\\subsection{");
+			_output("%s", "\n### ");
 			_generateText(tag->text);
-			_output("%s", "}\n");
+			_output("%s", "\n");
 			break;
 		case HEADING_3:
-			_output("%s", "\\subsubsection{");
+			_output("%s", "\n#### ");
 			_generateText(tag->text);
-			_output("%s", "}\n");
+			_output("%s", "\n");
 			break;
-		case PAGE_SKIP: _output("%s", "\\newpage\n"); break;
+		case PAGE_SKIP: _output("%s", "<div style=\"page-break-after: always;\"></div>"); break;
 		case IMAGE:
-			_output("%s", "\\begin{center}\n\\includegraphics[width=0.75\\textwidth]{");
+			_output("%s", "\n![ alt ](");
 			_generateText(tag->text);
-			_output("%s", "}\n\\end{center}\n");
+			_output("%s", ")\n");
 			break;
 		case CODE:
-			_output("%s", "\\begin{minted}{");
-			_output("%s", tag->language);
-			_output("%s", "}\n");
+			_output("%s", "\n`");
 			_generateText(tag->code);
-			_output("%s", "\n\\end{minted}\n");
+			_output("%s", "`\n");
 			break;
 		case ESCAPE:
+			_output("%s", "\n");
 			_generateText(tag->text);
 			_output("%s", "\n");
 			break;
 		case ORDERED_LIST:
-			_output("%s", "\\begin{enumerate}\n");
-			_generateList(tag->list);
-			_output("%s", "\\end{enumerate}\n");
+			_output("%s", "\n");
+			_generateList(tag->list, true);
+			_output("%s", "\n");
 			break;
 		case UNORDERED_LIST:
-			_output("%s", "\\begin{itemize}\n");
-			_generateList(tag->list);
-			_output("%s", "\\end{itemize}\n");
+			_output("%s", "\n");
+			_generateList(tag->list, false);
+			_output("%s", "\n");
 			break;
 		case BOLD_TEXT:
-			_output("%s", "\\textbf{");
+			_output("%s", "**");
 			_generateText(tag->text);
-			_output("}");
+			_output("%s", "**\n");
 			break;
 		case BOLD:
-			_output("%s", "\\textbf{");
+			_output("%s", "**");
 			_generateBold(tag->bold);
-			_output("%s", "}");
+			_output("%s", "**\n");
 			break;
 		case ITALIC_TEXT:
-			_output("%s", "\\textit{");
+			_output("%s", "*");
 			_generateText(tag->text);
-			_output("}");
+			_output("%s", "*\n");
 			break;
 		case ITALIC:
-			_output("%s", "\\textit{");
+			_output("%s", "*");
 			_generateItalic(tag->italic);
-			_output("%s", "}");
+			_output("%s", "*\n");
 			break;
 		case UNDERLINE_TEXT:
-			_output("%s", "\\underline{");
+			_output("%s", "<ins>");
 			_generateText(tag->text);
-			_output("}");
+			_output("%s", "</ins>\n");
 			break;
 		case UNDERLINE:
-			_output("%s", "\\underline{");
+			_output("%s", "<ins>");
 			_generateUnderline(tag->underline);
-			_output("%s", "}");
+			_output("%s", "</ins>\n");
 			break;
 		case TABLE:
-			_output("%s", "\\begin{center}\n\\begin{tabular} { | ");
+			_output("%s", "| ");
 			for (int i = 0; i < tag->cols; i++) {
-				_output("%s", "c | ");
+				_output("%s", "| ");
 			}
-			_output("%s", "}\n\\hline\n");
+			_output("%s", "\n");
+			_output("%s", "| ");
+			for (int i = 0; i < tag->cols; i++) {
+				_output("%s", "--- | ");
+			}
+			_output("%s", "\n");
 			_generateTable(tag->table, tag->cols, 1);
-			_output("%s", "\\end{tabular}\n\\end{center}\n");
+			_output("%s", "\n");
 			break;
 		case STRING_TAG: _output("%s ", tag->value); break;
 		default: logError(_logger, "The specified tag type is unknown: %d", tag->type); break;
@@ -182,18 +183,18 @@ static void _generateTag(Tag* tag) {
 /**
  * Generates the output of a list.
  */
-static void _generateList(List* list) {
+static void _generateList(List* list, boolean isOrdered) {
 	switch (list->type) {
 		case LONELY_ITEM:
-			_output("%s", "\\item ");
+			_output("%s", isOrdered ? "1. " : "* ");
 			_generateText(list->lonelyText);
 			_output("%s", "\n");
 			break;
 		case MULTIPLE_ITEMS:
-			_output("%s", "\\item ");
+			_output("%s", isOrdered ? "1. " : "* ");
 			_generateText(list->text);
 			_output("%s", "\n");
-			_generateList(list->item);
+			_generateList(list->item, isOrdered);
 			break;
 		default: logError(_logger, "The specified list type is unknown: %d", list->type); break;
 	}
@@ -203,21 +204,25 @@ static void _generateList(List* list) {
  * Generates the output of a table.
  */
 static void _generateTable(Table* table, int totalCols, int currentCol) {
+	if (currentCol == 1) {
+		_output("%s", "| ");
+	}
+
 	switch (table->type) {
 		case LONELY_COLUMN:
 			_generateText(table->text);
 			for (int i = currentCol + 1; i <= totalCols; i++) {
-				_output("%s", " &");
+				_output("%s", " |");
 			}
-			_output("%s", " \\\\\n\\hline\n");
+			_output("%s", " |\n");
 			break;
 		case MULTIPLE_COLUMNS:
 			_generateText(table->text);
 			if (currentCol < totalCols) {
-				_output("%s", " & ");
+				_output("%s", "| ");
 				_generateTable(table->column, totalCols, currentCol + 1);
 			} else {
-				_output("%s", " \\\\\n\\hline\n");
+				_output("%s", " |\n");
 				_generateTable(table->column, totalCols, 1);
 			}
 			break;
@@ -231,24 +236,24 @@ static void _generateTable(Table* table, int totalCols, int currentCol) {
 static void _generateBold(Bold* bold) {
 	switch (bold->type) {
 		case BOLD_ITALIC:
-			_output("%s", "\\textit{");
+			_output("%s", "*");
 			_generateBoldItalic(bold->boldItalic);
-			_output("%s", "}");
+			_output("%s", "*");
 			break;
 		case BOLD_ITALIC_TEXT:
-			_output("%s", "\\textit{");
+			_output("%s", "*");
 			_generateText(bold->text);
-			_output("%s", "}");
+			_output("%s", "*");
 			break;
 		case BOLD_UNDERLINE:
-			_output("%s", "\\underline{");
+			_output("%s", "<ins>");
 			_generateBoldUnderline(bold->boldUnderline);
-			_output("%s", "}");
+			_output("%s", "</ins>");
 			break;
 		case BOLD_UNDERLINE_TEXT:
-			_output("%s", "\\underline{");
+			_output("%s", "<ins>");
 			_generateText(bold->text);
-			_output("%s", "}");
+			_output("%s", "</ins>");
 			break;
 		default: logError(_logger, "The specified bold type is unknown: %d", bold->type); break;
 	}
@@ -258,18 +263,18 @@ static void _generateBold(Bold* bold) {
  * Generates the output of a boldItalic.
  */
 static void _generateBoldItalic(BoldItalic* boldItalic) {
-	_output("%s", "\\underline{");
+	_output("%s", "<ins>");
 	_generateText(boldItalic->text);
-	_output("%s", "}");
+	_output("%s", "</ins>");
 }
 
 /**
  * Generates the output of a boldUnderline.
  */
 static void _generateBoldUnderline(BoldUnderline* boldUnderline) {
-	_output("%s", "\\textit{");
+	_output("%s", "*");
 	_generateText(boldUnderline->text);
-	_output("%s", "}");
+	_output("%s", "*");
 }
 
 /**
@@ -278,24 +283,24 @@ static void _generateBoldUnderline(BoldUnderline* boldUnderline) {
 static void _generateItalic(Italic* italic) {
 	switch (italic->type) {
 		case ITALIC_BOLD:
-			_output("%s", "\\textbf{");
+			_output("%s", "**");
 			_generateItalicBold(italic->italicBold);
-			_output("%s", "}");
+			_output("%s", "**");
 			break;
 		case ITALIC_BOLD_TEXT:
-			_output("%s", "\\textbf{");
+			_output("%s", "**");
 			_generateText(italic->text);
-			_output("%s", "}");
+			_output("%s", "**");
 			break;
 		case ITALIC_UNDERLINE:
-			_output("%s", "\\underline{");
+			_output("%s", "<ins>");
 			_generateItalicUnderline(italic->italicUnderline);
-			_output("%s", "}");
+			_output("%s", "</ins>");
 			break;
 		case ITALIC_UNDERLINE_TEXT:
-			_output("%s", "\\underline{");
+			_output("%s", "<ins>");
 			_generateText(italic->text);
-			_output("%s", "}");
+			_output("%s", "</ins>");
 			break;
 		default: logError(_logger, "The specified italic type is unknown: %d", italic->type); break;
 	}
@@ -305,18 +310,18 @@ static void _generateItalic(Italic* italic) {
  * Generates the output of an italicBold.
  */
 static void _generateItalicBold(ItalicBold* italicBold) {
-	_output("%s", "\\underline{");
+	_output("%s", "<ins>");
 	_generateText(italicBold->text);
-	_output("%s", "}");
+	_output("%s", "</ins>");
 }
 
 /**
  * Generates the output of an italicUnderline.
  */
 static void _generateItalicUnderline(ItalicUnderline* italicUnderline) {
-	_output("%s", "\\textbf{");
+	_output("%s", "**");
 	_generateText(italicUnderline->text);
-	_output("%s", "}");
+	_output("%s", "**");
 }
 
 /**
@@ -325,24 +330,24 @@ static void _generateItalicUnderline(ItalicUnderline* italicUnderline) {
 static void _generateUnderline(Underline* underline) {
 	switch (underline->type) {
 		case UNDERLINE_BOLD:
-			_output("%s", "\\textbf{");
+			_output("%s", "**");
 			_generateUnderlineBold(underline->underlineBold);
-			_output("%s", "}");
+			_output("%s", "**");
 			break;
 		case UNDERLINE_BOLD_TEXT:
-			_output("%s", "\\textbf{");
+			_output("%s", "**");
 			_generateText(underline->text);
-			_output("%s", "}");
+			_output("%s", "**");
 			break;
 		case UNDERLINE_ITALIC:
-			_output("%s", "\\textit{");
+			_output("%s", "*");
 			_generateUnderlineItalic(underline->underlineItalic);
-			_output("%s", "}");
+			_output("%s", "*");
 			break;
 		case ITALIC_UNDERLINE_TEXT:
-			_output("%s", "\\textit{");
+			_output("%s", "*");
 			_generateText(underline->text);
-			_output("%s", "}");
+			_output("%s", "*");
 			break;
 		default: logError(_logger, "The specified underline type is unknown: %d", underline->type); break;
 	}
@@ -352,18 +357,18 @@ static void _generateUnderline(Underline* underline) {
  * Generates the output of an underlineBold.
  */
 static void _generateUnderlineBold(UnderlineBold* underlineBold) {
-	_output("%s", "\\textit{");
+	_output("%s", "*");
 	_generateText(underlineBold->text);
-	_output("%s", "}");
+	_output("%s", "*");
 }
 
 /**
  * Generates the output of an underlineItalic.
  */
 static void _generateUnderlineItalic(UnderlineItalic* underlineItalic) {
-	_output("%s", "\\textbf{");
+	_output("%s", "**");
 	_generateText(underlineItalic->text);
-	_output("%s", "}");
+	_output("%s", "**");
 }
 
 /**
@@ -372,7 +377,11 @@ static void _generateUnderlineItalic(UnderlineItalic* underlineItalic) {
 static void _generateText(Text* text) {
 	switch (text->type) {
 		case STRING_TEXT:
-			_output("%s ", text->value);
+			if (text->text->type == STRING_TEXT) {
+				_output("%s ", text->value);
+			} else {
+				_output("%s", text->value);
+			}
 			_generateText(text->text);
 			break;
 		case EMPTY_TEXT: break;
@@ -387,7 +396,7 @@ static void _generateText(Text* text) {
  * @see https://ctan.dcc.uchile.cl/graphics/pgf/contrib/forest/forest-doc.pdf
  */
 static void _generatePrologue(void) {
-	_output("%s", "\\documentclass{article}\n\n\\usepackage{minted}\n\n");
+	_output("%s", "\n");
 }
 
 /**
@@ -395,7 +404,6 @@ static void _generatePrologue(void) {
  * completes a valid Latex document.
  */
 static void _generateEpilogue(const int value) {
-	_output("%s", "\n\\end{document}\n");
 }
 
 /**

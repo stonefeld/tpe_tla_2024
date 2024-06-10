@@ -37,20 +37,6 @@
 	Program * program;
 }
 
-/**
- * Destructors. This functions are executed after the parsing ends, so if the
- * AST must be used in the following phases of the compiler you shouldn't used
- * this approach.
- *
- * @see https://www.gnu.org/software/bison/manual/html_node/Destructor-Decl.html
- */
-/*
-%destructor { freeText($$); } <text>
-%destructor { freeTitle($$); } <title>
-%destructor { freeTag($$); } <tag>
-%destructor { freeProgram($$); } <program>
-*/
-
 /** Terminals. */
 %token <token> UNKNOWN
 %token <number> NUMBER
@@ -87,10 +73,6 @@
 %token <token> CODE_START
 %token <token> ESCAPE_END
 %token <token> ESCAPE_START
-%token <token> EQUATION_END
-%token <token> EQUATION_START
-
-/* %token <token> UNKNOWN */
 
 /** Non-terminals. */
 %type <text> text
@@ -109,20 +91,6 @@
 %type <tags> tags
 %type <title> title
 %type <program> program
-
-/**
- * Precedence and associativity.
- *
- * @see https://www.gnu.org/software/bison/manual/html_node/Precedence.html
- */
-
-/* %left STRING
-%left UNDERLINE_START UNDERLINE_END
-%left ITALIC_START ITALIC_END
-%left BOLD_START BOLD_END
-%left LIST_ITEM_START LIST_ITEM_END CELL_SEPARATOR_START CELL_SEPARATOR_END
-%left TABLE_START TABLE_END UNORDERED_LIST_START UNORDERED_LIST_END ORDERED_LIST_START ORDERED_LIST_END
-%left TITLE_START TITLE_END HEADING_1_START HEADING_1_END HEADING_2_START HEADING_2_END HEADING_3_START HEADING_3_END PAGE_SKIP_START PAGE_SKIP_END IMAGE_START IMAGE_END CODE_START CODE_END ESCAPE_START ESCAPE_END EQUATION_START EQUATION_END */
 
 %%
 
@@ -149,7 +117,6 @@ tag:
 	| IMAGE_START 				text		 		IMAGE_END								{ $$ = ImageSemanticAction($2); }
 	| CODE_START 				STRING				text		 		CODE_END			{ $$ = CodeSemanticAction($2, $3); }
 	| ESCAPE_START 				text		 		ESCAPE_END								{ $$ = EscapeSemanticAction($2); }
-	| EQUATION_START 			text		 		EQUATION_END							{ $$ = EquationSemanticAction($2); }
 	| UNORDERED_LIST_START 		list				UNORDERED_LIST_END						{ $$ = UnorderedListSemanticAction($2); }
 	| ORDERED_LIST_START 		list	 			ORDERED_LIST_END						{ $$ = OrderedListSemanticAction($2); }
 	| BOLD_START 				bold	 			BOLD_END								{ $$ = BoldSemanticAction($2); }

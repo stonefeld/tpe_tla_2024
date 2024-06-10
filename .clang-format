@@ -19,7 +19,7 @@ BreakBeforeBinaryOperators: All
 BreakBeforeTernaryOperators: 'true'
 ColumnLimit: '120'
 ContinuationIndentWidth: '4'
-IndentPPDirectives: AfterHash
+IndentPPDirectives: None
 IndentWidth: '4'
 Language: Cpp
 PointerAlignment: Right

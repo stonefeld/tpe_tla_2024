@@ -40,7 +40,6 @@ Token UnderlineLexemeAction(LexicalAnalyzerContext *lexicalAnalyzerContext);
 Token TableLexemeAction(LexicalAnalyzerContext *lexicalAnalyzerContext);
 Token CodeLexemeAction(LexicalAnalyzerContext *lexicalAnalyzerContext);
 Token EscapedLexemeAction(LexicalAnalyzerContext *lexicalAnalyzerContext);
-Token EquationLexemeAction(LexicalAnalyzerContext *lexicalAnalyzerContext);
 
 Token StringLexemeAction(LexicalAnalyzerContext *lexicalAnalyzerContext);
 

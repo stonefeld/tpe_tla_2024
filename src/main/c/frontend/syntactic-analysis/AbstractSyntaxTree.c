@@ -65,7 +65,6 @@ void freeTag(Tag* tag) {
 			case PAGE_SKIP:
 			case IMAGE:
 			case ESCAPE:
-			case EQUATION:
 			case BOLD_TEXT:
 			case ITALIC_TEXT:
 			case UNDERLINE_TEXT: freeText(tag->text); break;

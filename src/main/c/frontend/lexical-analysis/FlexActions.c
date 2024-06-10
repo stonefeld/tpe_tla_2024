@@ -23,7 +23,6 @@ static boolean isUnderline = false;
 static boolean isTable = false;
 static boolean isCode = false;
 static boolean isEscaped = false;
-static boolean isEquation = false;
 
 void initializeFlexActionsModule() {
 	_logIgnoredLexemes = getBooleanOrDefault("LOG_IGNORED_LEXEMES", _logIgnoredLexemes);
@@ -183,14 +182,6 @@ Token EscapedLexemeAction(LexicalAnalyzerContext *lexicalAnalyzerContext) {
 	_logLexicalAnalyzerContext(__FUNCTION__, lexicalAnalyzerContext);
 	Token token = isEscaped ? ESCAPE_END : ESCAPE_START;
 	isEscaped = !isEscaped;
-	lexicalAnalyzerContext->semanticValue->token = token;
-	return token;
-}
-
-Token EquationLexemeAction(LexicalAnalyzerContext *lexicalAnalyzerContext) {
-	_logLexicalAnalyzerContext(__FUNCTION__, lexicalAnalyzerContext);
-	Token token = isEquation ? EQUATION_END : EQUATION_START;
-	isEquation = !isEquation;
 	lexicalAnalyzerContext->semanticValue->token = token;
 	return token;
 }

@@ -35,7 +35,6 @@ Tag* PageSkipSemanticAction(Text* text);
 Tag* ImageSemanticAction(Text* text);
 Tag* CodeSemanticAction(char* language, Text* text);
 Tag* EscapeSemanticAction(Text* text);
-Tag* EquationSemanticAction(Text* text);
 
 Tag* UnorderedListSemanticAction(List* list);
 Tag* OrderedListSemanticAction(List* list);

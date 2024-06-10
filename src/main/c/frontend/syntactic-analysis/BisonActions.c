@@ -148,14 +148,6 @@ Tag* EscapeSemanticAction(Text* text) {
 	return escape;
 }
 
-Tag* EquationSemanticAction(Text* text) {
-	_logSyntacticAnalyzerAction(__FUNCTION__);
-	Tag* equation = calloc(1, sizeof(Tag));
-	equation->text = text;
-	equation->type = EQUATION;
-	return equation;
-}
-
 Tag* UnorderedListSemanticAction(List* list) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	Tag* unorderedList = calloc(1, sizeof(Tag));

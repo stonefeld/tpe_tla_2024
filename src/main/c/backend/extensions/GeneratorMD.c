@@ -102,7 +102,7 @@ static void _generateTag(Tag* tag) {
 			_generateText(tag->text);
 			_output("%s", "\n");
 			break;
-		case PAGE_SKIP: _output("%s", "<div style=\"page-break-after: always;\"></div>"); break;
+		case PAGE_SKIP: _output("%s", "\n<div style=\"page-break-after: always;\"></div>\n"); break;
 		case IMAGE:
 			_output("%s", "\n![ alt ](");
 			_generateText(tag->text);

@@ -105,7 +105,7 @@ static void _generateTag(Tag* tag) {
 			_generateText(tag->text);
 			_output("%s", "}\n");
 			break;
-		case PAGE_SKIP: _output("%s", "\\newpage\n"); break;
+		case PAGE_SKIP: _output("%s", "\n\\newpage\n"); break;
 		case IMAGE:
 			_output("%s", "\\begin{center}\n\\includegraphics[width=0.75\\textwidth]{");
 			_generateText(tag->text);
@@ -369,7 +369,11 @@ static void _generateUnderlineItalic(UnderlineItalic* underlineItalic) {
 static void _generateText(Text* text) {
 	switch (text->type) {
 		case STRING_TEXT:
-			_output("%s ", text->value);
+			if (text->text->type == STRING_TEXT) {
+				_output("%s ", text->value);
+			} else {
+				_output("%s", text->value);
+			}
 			_generateText(text->text);
 			break;
 		case EMPTY_TEXT: break;

@@ -109,9 +109,9 @@ static void _generateTag(Tag* tag) {
 			_output("%s", ")\n");
 			break;
 		case CODE:
-			_output("%s", "\n`");
+			_output("%s%s", "\n```", tag->language);
 			_generateText(tag->code);
-			_output("%s", "`\n");
+			_output("%s", "```\n");
 			break;
 		case ESCAPE:
 			_output("%s", "\n");

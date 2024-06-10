@@ -17,6 +17,7 @@
 
 /* %x MULTILINE_COMMENT */
 %x CANA
+%x CODE
 
 /**
  * Reusable patterns.
@@ -27,7 +28,9 @@
 
 TEXT [][a-zA-Z0-9*@&=+$/?%#_~|<>{}()'"\\!:;.,\-]+
 CANA 👮‍♂️
-NOCANA ^{CANA}+
+NOCANA [^👮‍♂️ \n]+
+CODE 💻
+NOCODE [^💻 \n]+
 
 %%
 
@@ -45,16 +48,22 @@ NOCANA ^{CANA}+
 "🤌"							        { return ItalicLexemeAction(createLexicalAnalyzerContext()); }
 "📉"                                    { return UnderlineLexemeAction(createLexicalAnalyzerContext()); }
 "📊"                                    { return TableLexemeAction(createLexicalAnalyzerContext()); }
-"💻"                                    { return CodeLexemeAction(createLexicalAnalyzerContext()); }
+"💻"                                    { BEGIN(CODE); return CodeLexemeAction(createLexicalAnalyzerContext()); }
 "👮‍♂️"                                    { BEGIN(CANA); return EscapedLexemeAction(createLexicalAnalyzerContext()); }
 
+<CANA>"👮‍♂️"                              { BEGIN(INITIAL); return EscapedLexemeAction(createLexicalAnalyzerContext()); }
+<CANA>[\n]+                             { return StringLexemeAction(createLexicalAnalyzerContext()); }
+<CANA>[ ]+						        { IgnoredLexemeAction(createLexicalAnalyzerContext()); }
+<CANA>{NOCANA}                          { return StringLexemeAction(createLexicalAnalyzerContext()); }
+
+<CODE>"💻"                              { BEGIN(INITIAL); return CodeLexemeAction(createLexicalAnalyzerContext()); }
+<CODE>[\n]+                             { return StringLexemeAction(createLexicalAnalyzerContext()); }
+<CODE>[ ]+						        { IgnoredLexemeAction(createLexicalAnalyzerContext()); }
+<CODE>{NOCODE}                          { return StringLexemeAction(createLexicalAnalyzerContext()); }
 
 [[:space:]]+						    { IgnoredLexemeAction(createLexicalAnalyzerContext()); }
 {TEXT}									{ return StringLexemeAction(createLexicalAnalyzerContext()); }
 .                                       { return UnknownLexemeAction(createLexicalAnalyzerContext()); }
-
-<CANA>"👮‍♂️"                              { BEGIN(INITIAL); return EscapedLexemeAction(createLexicalAnalyzerContext()); }
-<CANA>{NOCANA}                          { return StringLexemeAction(createLexicalAnalyzerContext()); }
 
 %%
 

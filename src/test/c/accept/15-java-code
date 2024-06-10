@@ -1,29 +1,26 @@
-💻 java
+💻 java 
 public class QueryArguments implements Iterable<QueryObject> {
-   private
-	final List<QueryObject> conditions = new ArrayList<>();
 
-   public
-	void put(String column, Object value, QueryCondition condition, boolean or) {
+	private final List<QueryObject> conditions = new ArrayList<>();
+
+	public void put(String column, Object value, QueryCondition condition, boolean or) {
 		if (value == null || (value instanceof String s && s.isEmpty()))
 			return;
 		conditions.add(new QueryObject(column, value, condition, or));
 	}
 
-   public
-	void replace(String column, Object value, QueryCondition condition, boolean or) {
-		conditions.removeIf(q->q.column.equals(column));
+	public void replace(String column, Object value, QueryCondition condition, boolean or) {
+		conditions.removeIf(q -> q.column.equals(column));
 		put(column, value, condition, or);
 	}
 
-	@Override public Iterator<QueryObject> iterator() {
+	@Override
+	public Iterator<QueryObject> iterator() {
 		return conditions.iterator();
 	}
 
-   public
-	boolean isEmpty() {
+	public boolean isEmpty() {
 		return conditions.isEmpty();
 	}
 
-}
-💻
+} 💻

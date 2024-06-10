@@ -1,9 +1,6 @@
 #ifndef MARKDOWN_GENERATOR
 #include "Generator.h"
 
-// TODO: CHEQUEAR ESTO
-#include "../../frontend/syntactic-analysis/BisonParser.h"
-
 /* MODULE INTERNAL STATE */
 
 const char _indentationCharacter = ' ';

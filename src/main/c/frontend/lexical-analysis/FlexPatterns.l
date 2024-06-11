@@ -52,8 +52,7 @@
  * @see https://westes.github.io/flex/manual/Patterns.html
  */
 
-TEXT [][a-zA-Z0-9*@&=+$/?%#_~|<>{}()'"\\!:;.,\-]+
-NOBOLDITALICUNDERLINE [^👨‍🦲🤌📉\n]+
+TEXT [][a-zA-Z0-9*@&=+$/?%#_~|<>{}()'"\\!:;.,\- ]+
 
 %%
 
@@ -110,73 +109,88 @@ NOBOLDITALICUNDERLINE [^👨‍🦲🤌📉\n]+
 <BOLD>"🤌"                                      { BEGIN(BOLDITALIC); return ItalicLexemeAction(createLexicalAnalyzerContext()); }
 <BOLD>"📉"                                      { BEGIN(BOLDUNDERLINE); return UnderlineLexemeAction(createLexicalAnalyzerContext()); }
 <BOLD>[\n]+                                     { IgnoredLexemeAction(createLexicalAnalyzerContext()); }
-<BOLD>{NOBOLDITALICUNDERLINE}                   { return StringLexemeAction(createLexicalAnalyzerContext()); }
+<BOLD>{TEXT}                                    { return StringLexemeAction(createLexicalAnalyzerContext()); }
+<BOLD>.                                         { IgnoredLexemeAction(createLexicalAnalyzerContext()); }
 
 <BOLDITALIC>"🤌"                                { BEGIN(BOLD); return ItalicLexemeAction(createLexicalAnalyzerContext()); }
 <BOLDITALIC>"📉"                                { BEGIN(BOLDITALICUNDERLINE); return UnderlineLexemeAction(createLexicalAnalyzerContext()); }
 <BOLDITALIC>[\n]+                               { IgnoredLexemeAction(createLexicalAnalyzerContext()); }
-<BOLDITALIC>{NOBOLDITALICUNDERLINE}             { return StringLexemeAction(createLexicalAnalyzerContext()); }
+<BOLDITALIC>{TEXT}                              { return StringLexemeAction(createLexicalAnalyzerContext()); }
+<BOLDITALIC>.                                   { IgnoredLexemeAction(createLexicalAnalyzerContext()); }
 
 <BOLDITALICUNDERLINE>"📉"                       { BEGIN(BOLDITALIC); return UnderlineLexemeAction(createLexicalAnalyzerContext());  }
 <BOLDITALICUNDERLINE>[\n]+                      { IgnoredLexemeAction(createLexicalAnalyzerContext()); }
-<BOLDITALICUNDERLINE>{NOBOLDITALICUNDERLINE}    { return StringLexemeAction(createLexicalAnalyzerContext()); }
+<BOLDITALICUNDERLINE>{TEXT}                     { return StringLexemeAction(createLexicalAnalyzerContext()); }
+<BOLDITALICUNDERLINE>.                          { IgnoredLexemeAction(createLexicalAnalyzerContext()); }
 
 <BOLDUNDERLINE>"📉"                             { BEGIN(BOLD); return UnderlineLexemeAction(createLexicalAnalyzerContext()); }
 <BOLDUNDERLINE>"🤌"                             { BEGIN(BOLDUNDERLINEITALIC); return ItalicLexemeAction(createLexicalAnalyzerContext()); }
 <BOLDUNDERLINE>[\n]+                            { IgnoredLexemeAction(createLexicalAnalyzerContext()); }
-<BOLDUNDERLINE>{NOBOLDITALICUNDERLINE}          { return StringLexemeAction(createLexicalAnalyzerContext()); }
+<BOLDUNDERLINE>{TEXT}                           { return StringLexemeAction(createLexicalAnalyzerContext()); }
+<BOLDUNDERLINE>.                                { IgnoredLexemeAction(createLexicalAnalyzerContext()); }
 
 <BOLDUNDERLINEITALIC>"🤌"                       { BEGIN(BOLDUNDERLINE); return ItalicLexemeAction(createLexicalAnalyzerContext());  }
 <BOLDUNDERLINEITALIC>[\n]+                      { IgnoredLexemeAction(createLexicalAnalyzerContext()); }
-<BOLDUNDERLINEITALIC>{NOBOLDITALICUNDERLINE}    { return StringLexemeAction(createLexicalAnalyzerContext()); }
+<BOLDUNDERLINEITALIC>{TEXT}                     { return StringLexemeAction(createLexicalAnalyzerContext()); }
+<BOLDUNDERLINEITALIC>.                          { IgnoredLexemeAction(createLexicalAnalyzerContext()); }
 
 <ITALIC>"🤌"                                    { BEGIN(INITIAL); return ItalicLexemeAction(createLexicalAnalyzerContext()); }
 <ITALIC>"👨‍🦲"                                    { BEGIN(ITALICBOLD); return BoldLexemeAction(createLexicalAnalyzerContext()); }
 <ITALIC>"📉"                                    { BEGIN(ITALICUNDERLINE); return UnderlineLexemeAction(createLexicalAnalyzerContext()); }
 <ITALIC>[\n]+                                   { IgnoredLexemeAction(createLexicalAnalyzerContext()); }
-<ITALIC>{NOBOLDITALICUNDERLINE}                 { return StringLexemeAction(createLexicalAnalyzerContext()); }
+<ITALIC>{TEXT}                                  { return StringLexemeAction(createLexicalAnalyzerContext()); }
+<ITALIC>.                                       { IgnoredLexemeAction(createLexicalAnalyzerContext()); }
 
 <ITALICBOLD>"👨‍🦲"                                { BEGIN(ITALIC); return BoldLexemeAction(createLexicalAnalyzerContext()); }
 <ITALICBOLD>"📉"                                { BEGIN(ITALICBOLDUNDERLINE); return UnderlineLexemeAction(createLexicalAnalyzerContext()); }
 <ITALICBOLD>[\n]+                               { IgnoredLexemeAction(createLexicalAnalyzerContext()); }
-<ITALICBOLD>{NOBOLDITALICUNDERLINE}             { return StringLexemeAction(createLexicalAnalyzerContext()); }
+<ITALICBOLD>{TEXT}                              { return StringLexemeAction(createLexicalAnalyzerContext()); }
+<ITALICBOLD>.                                   { IgnoredLexemeAction(createLexicalAnalyzerContext()); }
 
 <ITALICBOLDUNDERLINE>"📉"                       { BEGIN(ITALICBOLD); return UnderlineLexemeAction(createLexicalAnalyzerContext());  }
 <ITALICBOLDUNDERLINE>[\n]+                      { IgnoredLexemeAction(createLexicalAnalyzerContext()); }
-<ITALICBOLDUNDERLINE>{NOBOLDITALICUNDERLINE}    { return StringLexemeAction(createLexicalAnalyzerContext()); }
+<ITALICBOLDUNDERLINE>{TEXT}                     { return StringLexemeAction(createLexicalAnalyzerContext()); }
+<ITALICBOLDUNDERLINE>.                          { IgnoredLexemeAction(createLexicalAnalyzerContext()); }
 
 <ITALICUNDERLINE>"📉"                           { BEGIN(ITALIC); return UnderlineLexemeAction(createLexicalAnalyzerContext()); }
 <ITALICUNDERLINE>"👨‍🦲"                           { BEGIN(ITALICUNDERLINEBOLD); return BoldLexemeAction(createLexicalAnalyzerContext()); }
 <ITALICUNDERLINE>[\n]+                          { IgnoredLexemeAction(createLexicalAnalyzerContext()); }
-<ITALICUNDERLINE>{NOBOLDITALICUNDERLINE}        { return StringLexemeAction(createLexicalAnalyzerContext()); }
+<ITALICUNDERLINE>{TEXT}                         { return StringLexemeAction(createLexicalAnalyzerContext()); }
+<ITALICUNDERLINE>.                              { IgnoredLexemeAction(createLexicalAnalyzerContext()); }
 
 <ITALICUNDERLINEBOLD>"👨‍🦲"                       { BEGIN(ITALICUNDERLINE); return BoldLexemeAction(createLexicalAnalyzerContext());  }
 <ITALICUNDERLINEBOLD>[\n]+                      { IgnoredLexemeAction(createLexicalAnalyzerContext()); }
-<ITALICUNDERLINEBOLD>{NOBOLDITALICUNDERLINE}    { return StringLexemeAction(createLexicalAnalyzerContext()); }
+<ITALICUNDERLINEBOLD>{TEXT}                     { return StringLexemeAction(createLexicalAnalyzerContext()); }
+<ITALICUNDERLINEBOLD>.                          { IgnoredLexemeAction(createLexicalAnalyzerContext()); }
 
 <UNDERLINE>"📉"                                 { BEGIN(INITIAL); return UnderlineLexemeAction(createLexicalAnalyzerContext()); }
 <UNDERLINE>"👨‍🦲"                                 { BEGIN(UNDERLINEBOLD); return BoldLexemeAction(createLexicalAnalyzerContext()); }
 <UNDERLINE>"🤌"                                 { BEGIN(UNDERLINEITALIC); return ItalicLexemeAction(createLexicalAnalyzerContext()); }
 <UNDERLINE>[\n]+                                { IgnoredLexemeAction(createLexicalAnalyzerContext()); }
-<UNDERLINE>{NOBOLDITALICUNDERLINE}              { return StringLexemeAction(createLexicalAnalyzerContext()); }
+<UNDERLINE>{TEXT}                               { return StringLexemeAction(createLexicalAnalyzerContext()); }
+<UNDERLINE>.                                    { IgnoredLexemeAction(createLexicalAnalyzerContext()); }
 
 <UNDERLINEBOLD>"👨‍🦲"                             { BEGIN(UNDERLINE); return BoldLexemeAction(createLexicalAnalyzerContext()); }
 <UNDERLINEBOLD>"🤌"                             { BEGIN(UNDERLINEBOLDITALIC); return ItalicLexemeAction(createLexicalAnalyzerContext()); }
 <UNDERLINEBOLD>[\n]+                            { IgnoredLexemeAction(createLexicalAnalyzerContext()); }
-<UNDERLINEBOLD>{NOBOLDITALICUNDERLINE}          { return StringLexemeAction(createLexicalAnalyzerContext()); }
+<UNDERLINEBOLD>{TEXT}                           { return StringLexemeAction(createLexicalAnalyzerContext()); }
+<UNDERLINEBOLD>.                                { IgnoredLexemeAction(createLexicalAnalyzerContext()); }
 
 <UNDERLINEBOLDITALIC>"🤌"                       { BEGIN(UNDERLINEBOLD); return ItalicLexemeAction(createLexicalAnalyzerContext());  }
 <UNDERLINEBOLDITALIC>[\n]+                      { IgnoredLexemeAction(createLexicalAnalyzerContext()); }
-<UNDERLINEBOLDITALIC>{NOBOLDITALICUNDERLINE}    { return StringLexemeAction(createLexicalAnalyzerContext()); }
+<UNDERLINEBOLDITALIC>{TEXT}                     { return StringLexemeAction(createLexicalAnalyzerContext()); }
+<UNDERLINEBOLDITALIC>.                          { IgnoredLexemeAction(createLexicalAnalyzerContext()); }
 
 <UNDERLINEITALIC>"🤌"                           { BEGIN(UNDERLINE); return ItalicLexemeAction(createLexicalAnalyzerContext()); }
 <UNDERLINEITALIC>"👨‍🦲"                           { BEGIN(UNDERLINEITALICBOLD); return BoldLexemeAction(createLexicalAnalyzerContext()); }
 <UNDERLINEITALIC>[\n]+                          { IgnoredLexemeAction(createLexicalAnalyzerContext()); }
-<UNDERLINEITALIC>{NOBOLDITALICUNDERLINE}        { return StringLexemeAction(createLexicalAnalyzerContext()); }
+<UNDERLINEITALIC>{TEXT}                         { return StringLexemeAction(createLexicalAnalyzerContext()); }
+<UNDERLINEITALIC>.                              { IgnoredLexemeAction(createLexicalAnalyzerContext()); }
 
 <UNDERLINEITALICBOLD>"👨‍🦲"                       { BEGIN(UNDERLINEITALIC); return BoldLexemeAction(createLexicalAnalyzerContext());  }
 <UNDERLINEITALICBOLD>[\n]+                      { IgnoredLexemeAction(createLexicalAnalyzerContext()); }
-<UNDERLINEITALICBOLD>{NOBOLDITALICUNDERLINE}    { return StringLexemeAction(createLexicalAnalyzerContext()); }
+<UNDERLINEITALICBOLD>{TEXT}                     { return StringLexemeAction(createLexicalAnalyzerContext()); }
+<UNDERLINEITALICBOLD>.                          { IgnoredLexemeAction(createLexicalAnalyzerContext()); }
 
 {TEXT}									        { return StringLexemeAction(createLexicalAnalyzerContext()); }
 [[:space:]]                                     { return StringLexemeAction(createLexicalAnalyzerContext()); }

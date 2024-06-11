@@ -156,7 +156,7 @@ bold_underline:
 
 italic:
 	  BOLD_START 				italic_bold 		BOLD_END								{ $$ = ItalicBoldSemanticAction($2); }
-	| BOLD_START				text				BOLD_START								{ $$ = ItalicBoldTextSemanticAction($2); }
+	| BOLD_START				text				BOLD_END								{ $$ = ItalicBoldTextSemanticAction($2); }
 	| UNDERLINE_START			italic_underline	UNDERLINE_END							{ $$ = ItalicUnderlineSemanticAction($2); }
 	| UNDERLINE_START			text				UNDERLINE_END							{ $$ = ItalicUnderlineTextSemanticAction($2); }
 ;

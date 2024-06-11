@@ -20,8 +20,11 @@
 %x CODE
 
 %x UNORDEREDLIST
+%x LISTUNORDEREDITEM
 %x ORDEREDLIST
+%x LISTORDEREDITEM
 %x TABLE
+%x CELLSEPARATOR
 
 %x BOLD
 %x BOLDITALIC
@@ -50,21 +53,6 @@
  */
 
 TEXT [][a-zA-Z0-9*@&=+$/?%#_~|<>{}()'"\\!:;.,\-]+
-CANA 👮‍♂️
-NOCANA [^👮‍♂️ \n]+
-CODE 💻
-NOCODE [^💻 \n]+
-
-UNORDEREDLIST 💥
-NOUNORDEREDLIST [^💥🎯 \n]+
-ORDEREDLIST 🔢
-NOORDEREDLIST [^🔢🎯 \n]+
-TABLE 📊
-NOTABLE [^📊🤸‍♂️ \n]+
-
-BOLD 👨‍🦲
-ITALIC 🤌
-UNDERLINE 📉
 NOBOLDITALICUNDERLINE [^👨‍🦲🤌📉\n]+
 
 %%
@@ -85,28 +73,38 @@ NOBOLDITALICUNDERLINE [^👨‍🦲🤌📉\n]+
 "👮‍♂️"                                            { BEGIN(CANA); return EscapedLexemeAction(createLexicalAnalyzerContext()); }
 
 <CANA>"👮‍♂️"                                      { BEGIN(INITIAL); return EscapedLexemeAction(createLexicalAnalyzerContext()); }
-<CANA>[\n]+                                     { return StringLexemeAction(createLexicalAnalyzerContext()); }
+<CANA>.|[\n]+                                   { return StringLexemeAction(createLexicalAnalyzerContext()); }
 <CANA>[ ]+                                      { IgnoredLexemeAction(createLexicalAnalyzerContext()); }
-<CANA>{NOCANA}                                  { return StringLexemeAction(createLexicalAnalyzerContext()); }
 
 <CODE>"💻"                                      { BEGIN(INITIAL); return CodeLexemeAction(createLexicalAnalyzerContext()); }
-<CODE>[\n ]+                                    { return StringLexemeAction(createLexicalAnalyzerContext()); }
-<CODE>{NOCODE}                                  { return StringLexemeAction(createLexicalAnalyzerContext()); }
+<CODE>.|[\n ]+                                   { return StringLexemeAction(createLexicalAnalyzerContext()); }
 
 <UNORDEREDLIST>"💥"                             { BEGIN(INITIAL); return UnorderedListLexemeAction(createLexicalAnalyzerContext()); }
-<UNORDEREDLIST>"🎯"                             { return ListItemLexemeAction(createLexicalAnalyzerContext()); }
+<UNORDEREDLIST>"🎯"                             { BEGIN(LISTUNORDEREDITEM); return ListItemLexemeAction(createLexicalAnalyzerContext()); }
 <UNORDEREDLIST>[[:space:]]                      { IgnoredLexemeAction(createLexicalAnalyzerContext()); }
-<UNORDEREDLIST>{NOUNORDEREDLIST}                { return StringLexemeAction(createLexicalAnalyzerContext()); }
+<UNORDEREDLIST>.                                { return StringLexemeAction(createLexicalAnalyzerContext()); }
+
+<LISTUNORDEREDITEM>"🎯"                         { BEGIN(UNORDEREDLIST); return ListItemLexemeAction(createLexicalAnalyzerContext()); }
+<LISTUNORDEREDITEM>.|[\n]+                      { return StringLexemeAction(createLexicalAnalyzerContext()); }
+<LISTUNORDEREDITEM>[ ]+                         { IgnoredLexemeAction(createLexicalAnalyzerContext()); }
 
 <ORDEREDLIST>"🔢"                               { BEGIN(INITIAL); return OrderedListLexemeAction(createLexicalAnalyzerContext()); }
-<ORDEREDLIST>"🎯"                               { return ListItemLexemeAction(createLexicalAnalyzerContext()); }
+<ORDEREDLIST>"🎯"                               { BEGIN(LISTORDEREDITEM); return ListItemLexemeAction(createLexicalAnalyzerContext()); }
 <ORDEREDLIST>[[:space:]]                        { IgnoredLexemeAction(createLexicalAnalyzerContext()); }
-<ORDEREDLIST>{NOORDEREDLIST}                    { return StringLexemeAction(createLexicalAnalyzerContext()); }
+<ORDEREDLIST>.                                  { return StringLexemeAction(createLexicalAnalyzerContext()); }
+
+<LISTORDEREDITEM>"🎯"                           { BEGIN(ORDEREDLIST); return ListItemLexemeAction(createLexicalAnalyzerContext()); }
+<LISTORDEREDITEM>.|[\n]+                        { return StringLexemeAction(createLexicalAnalyzerContext()); }
+<LISTORDEREDITEM>[ ]+                           { IgnoredLexemeAction(createLexicalAnalyzerContext()); }
 
 <TABLE>"📊"                                     { BEGIN(INITIAL); return TableLexemeAction(createLexicalAnalyzerContext()); }
-<TABLE>"🤸‍♂️"                                     { return CellSeparatorLexemeAction(createLexicalAnalyzerContext()); }
+<TABLE>"🤸‍♂️"                                     { BEGIN(CELLSEPARATOR); return CellSeparatorLexemeAction(createLexicalAnalyzerContext()); }
 <TABLE>[[:space:]]                              { IgnoredLexemeAction(createLexicalAnalyzerContext()); }
-<TABLE>{NOTABLE}                                { return StringLexemeAction(createLexicalAnalyzerContext()); }
+<TABLE>.                                        { return StringLexemeAction(createLexicalAnalyzerContext()); }
+
+<CELLSEPARATOR>"🤸‍♂️"                             { BEGIN(TABLE); return CellSeparatorLexemeAction(createLexicalAnalyzerContext()); }
+<CELLSEPARATOR>.|[\n]+                          { return StringLexemeAction(createLexicalAnalyzerContext()); }
+<CELLSEPARATOR>[ ]+                             { IgnoredLexemeAction(createLexicalAnalyzerContext()); }
 
 <BOLD>"👨‍🦲"                                      { BEGIN(INITIAL); return BoldLexemeAction(createLexicalAnalyzerContext()); }
 <BOLD>"🤌"                                      { BEGIN(BOLDITALIC); return ItalicLexemeAction(createLexicalAnalyzerContext()); }

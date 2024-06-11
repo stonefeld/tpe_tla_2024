@@ -44,7 +44,7 @@ static void _logLexicalAnalyzerContext(const char *functionName, LexicalAnalyzer
  */
 static void _logLexicalAnalyzerContext(const char *functionName, LexicalAnalyzerContext *lexicalAnalyzerContext) {
 	char *escapedLexeme = escape(lexicalAnalyzerContext->lexeme);
-	logDebugging(_logger, "%s: %s, lexeme = %s   (context = %d, length = %d, line = %d)", functionName, escapedLexeme,
+	logDebugging(_logger, "%s: %s, lexeme = '%s' (context = %d, length = %d, line = %d)", functionName, escapedLexeme,
 	             lexicalAnalyzerContext->lexeme, lexicalAnalyzerContext->currentContext, lexicalAnalyzerContext->length,
 	             lexicalAnalyzerContext->line);
 	free(escapedLexeme);
@@ -182,6 +182,7 @@ Token EscapedLexemeAction(LexicalAnalyzerContext *lexicalAnalyzerContext) {
 	_logLexicalAnalyzerContext(__FUNCTION__, lexicalAnalyzerContext);
 	Token token = isEscaped ? ESCAPE_END : ESCAPE_START;
 	isEscaped = !isEscaped;
+	logDebugging(_logger, "ADENTRO DE CANA: %d", isEscaped);
 	lexicalAnalyzerContext->semanticValue->token = token;
 	return token;
 }
